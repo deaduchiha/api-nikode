@@ -9,7 +9,7 @@ afterEach(() => {
 // Global test setup
 beforeAll(() => {
   // Mock environment variables
-  process.env.NODE_ENV = "test";
+  // process.env.NODE_ENV = "test";
   process.env.JWT_SECRET = "test-secret-key";
   process.env.API_KEY = "test-api-key";
 });

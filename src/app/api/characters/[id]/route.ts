@@ -1,4 +1,4 @@
-import { NextResponse } from "next/server";
+import { NextRequest, NextResponse } from "next/server";
 import { getCharacterById } from "@/lib/data/characters";
 import { characters } from "@/lib/data/characters";
 import {
@@ -11,10 +11,10 @@ import {
 import { UpdateCharacterSchema } from "@/types";
 import type { UpdateCharacter } from "@/types";
 
-export async function GET(
-  request: Request,
-  { params }: { params: { id: string } }
-): Promise<NextResponse> {
+export async function GET(request: NextRequest): Promise<NextResponse> {
+  const params = request.nextUrl.searchParams;
+  const id = params.get("id") || "";
+
   try {
     // Get API key from headers
     const apiKey =
@@ -34,8 +34,6 @@ export async function GET(
         { status: 401 }
       );
     }
-
-    const { id } = params;
 
     // Find character by ID
     const character = getCharacterById(id);
@@ -59,10 +57,10 @@ export async function GET(
   }
 }
 
-export async function PUT(
-  request: Request,
-  { params }: { params: { id: string } }
-): Promise<NextResponse> {
+export async function PUT(request: NextRequest): Promise<NextResponse> {
+  const params = request.nextUrl.searchParams;
+  const id = params.get("id") || "";
+
   try {
     // Get API key from headers
     const apiKey =
@@ -96,8 +94,6 @@ export async function PUT(
         { status: 403 }
       );
     }
-
-    const { id } = params;
 
     // Find character by ID
     const characterIndex = characters.findIndex((char) => char.id === id);
@@ -168,10 +164,10 @@ export async function PUT(
   }
 }
 
-export async function DELETE(
-  request: Request,
-  { params }: { params: { id: string } }
-): Promise<NextResponse> {
+export async function DELETE(request: NextRequest): Promise<NextResponse> {
+  const params = request.nextUrl.searchParams;
+  const id = params.get("id") || "";
+
   try {
     // Get API key from headers
     const apiKey =
@@ -203,8 +199,6 @@ export async function DELETE(
         { status: 403 }
       );
     }
-
-    const { id } = params;
 
     // Find character by ID
     const characterIndex = characters.findIndex((char) => char.id === id);

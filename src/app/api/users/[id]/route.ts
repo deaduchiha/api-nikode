@@ -1,4 +1,4 @@
-import { NextResponse } from "next/server";
+import { NextRequest, NextResponse } from "next/server";
 import { users, getUserById } from "@/lib/data/users";
 import {
   createApiResponse,
@@ -10,10 +10,10 @@ import {
 import { UpdateUserSchema } from "@/types";
 import type { UpdateUser } from "@/types";
 
-export async function GET(
-  request: Request,
-  { params }: { params: { id: string } }
-): Promise<NextResponse> {
+export async function GET(request: NextRequest): Promise<NextResponse> {
+  const params = request.nextUrl.searchParams;
+  const id = params.get("id") || "";
+
   try {
     // Get API key from headers
     const apiKey =
@@ -33,8 +33,6 @@ export async function GET(
         { status: 401 }
       );
     }
-
-    const { id } = params;
 
     // Find user by ID
     const user = getUserById(id);
@@ -58,10 +56,10 @@ export async function GET(
   }
 }
 
-export async function PUT(
-  request: Request,
-  { params }: { params: { id: string } }
-): Promise<NextResponse> {
+export async function PUT(request: NextRequest): Promise<NextResponse> {
+  const params = request.nextUrl.searchParams;
+  const id = params.get("id") || "";
+
   try {
     // Get API key from headers
     const apiKey =
@@ -83,8 +81,6 @@ export async function PUT(
     }
 
     // Check if user has permission to update users (admin only, or user updating their own profile)
-    const { id } = params;
-
     // Allow users to update their own profile, or admins to update any profile
     if (auth.role !== "admin") {
       // In a real app, you'd get the user ID from the JWT token
@@ -185,10 +181,10 @@ export async function PUT(
   }
 }
 
-export async function DELETE(
-  request: Request,
-  { params }: { params: { id: string } }
-): Promise<NextResponse> {
+export async function DELETE(request: NextRequest): Promise<NextResponse> {
+  const params = request.nextUrl.searchParams;
+  const id = params.get("id") || "";
+
   try {
     // Get API key from headers
     const apiKey =
@@ -220,8 +216,6 @@ export async function DELETE(
         { status: 403 }
       );
     }
-
-    const { id } = params;
 
     // Find user by ID
     const userIndex = users.findIndex((user) => user.id === id);
