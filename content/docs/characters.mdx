@@ -1,0 +1,745 @@
+---
+title: Characters API
+description: Manage anime characters with power levels, abilities, and stats
+---
+
+## Overview
+
+The Characters API allows you to:
+
+- Retrieve character lists with pagination and filtering
+- Get individual character details
+- Create new characters (Moderator+ required)
+- Update character information (Moderator+ required)
+- Delete characters (Admin only)
+
+## Authentication
+
+All endpoints require API key authentication. Include your API key in the request headers:
+
+```bash
+x-api-key: your-api-key
+# or
+Authorization: Bearer your-api-key
+```
+
+## Endpoints
+
+### GET /api/characters
+
+Retrieve a list of characters with optional filtering, sorting, and pagination.
+
+**Permissions**: All authenticated users
+
+**Query Parameters**:
+
+- `page` (number, default: 1): Page number for pagination
+- `limit` (number, default: 10, max: 100): Number of items per page
+- `q` (string, optional): Search characters by name
+- `anime` (string, optional): Filter by anime series
+- `minPower` (number, optional): Minimum power level
+- `maxPower` (number, optional): Maximum power level
+- `sortBy` (string, default: "name"): Sort field (name, power, intelligence, speed, strength, createdAt)
+- `sortOrder` (string, default: "asc"): Sort order (asc, desc)
+
+**Example Request**:
+
+```bash
+curl -H "x-api-key: your-api-key" \
+  "https://api.nikode.com/api/characters?page=1&limit=10&anime=Naruto&minPower=50"
+```
+
+**Example Response**:
+
+```json
+{
+  "success": true,
+  "message": "Characters retrieved successfully",
+  "data": [
+    {
+      "id": "char_1",
+      "name": "Naruto Uzumaki",
+      "anime": "Naruto",
+      "power": 95,
+      "intelligence": 70,
+      "speed": 85,
+      "strength": 80,
+      "image": "https://example.com/naruto.jpg",
+      "description": "The main protagonist of Naruto series",
+      "abilities": ["Rasengan", "Shadow Clone Jutsu", "Sage Mode"],
+      "personality": "Determined and never gives up",
+      "birthday": "October 10",
+      "height": "180cm",
+      "weight": "75kg",
+      "createdAt": "2024-01-01T00:00:00.000Z",
+      "updatedAt": "2024-01-01T00:00:00.000Z"
+    }
+  ],
+  "pagination": {
+    "page": 1,
+    "limit": 10,
+    "total": 50,
+    "totalPages": 5,
+    "hasNext": true,
+    "hasPrev": false
+  }
+}
+```
+
+<ApiTester
+  endpoint="/api/characters"
+  method="GET"
+  title="Test GET /api/characters"
+  description="Retrieve characters with filtering and pagination"
+  showAuthSection={true}
+  defaultParams={{
+    page: 1,
+    limit: 10,
+    sortBy: "name",
+    sortOrder: "asc",
+  }}
+  queryParams={[
+    { name: "page", type: "number", default: 1, description: "Page number" },
+    {
+      name: "limit",
+      type: "number",
+      default: 10,
+      description: "Items per page",
+    },
+    { name: "q", type: "string", description: "Search by name" },
+    { name: "anime", type: "string", description: "Filter by anime" },
+    { name: "minPower", type: "number", description: "Minimum power level" },
+    { name: "maxPower", type: "number", description: "Maximum power level" },
+    {
+      name: "sortBy",
+      type: "select",
+      options: [
+        "name",
+        "power",
+        "intelligence",
+        "speed",
+        "strength",
+        "createdAt",
+      ],
+      default: "name",
+      description: "Sort field",
+    },
+    {
+      name: "sortOrder",
+      type: "select",
+      options: ["asc", "desc"],
+      default: "asc",
+      description: "Sort order",
+    },
+  ]}
+/>
+
+### POST /api/characters
+
+Create a new character.
+
+**Permissions**: Moderator or Admin
+
+**Request Body**:
+
+```json
+{
+  "name": "string (required)",
+  "anime": "string (required)",
+  "power": "number (required, 0-100)",
+  "intelligence": "number (required, 0-100)",
+  "speed": "number (required, 0-100)",
+  "strength": "number (required, 0-100)",
+  "image": "string (required, URL)",
+  "description": "string (required)",
+  "abilities": "string[] (required)",
+  "personality": "string (required)",
+  "birthday": "string (optional)",
+  "height": "string (optional)",
+  "weight": "string (optional)"
+}
+```
+
+**Example Request**:
+
+```bash
+curl -X POST -H "x-api-key: your-api-key" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "name": "Goku",
+    "anime": "Dragon Ball",
+    "power": 98,
+    "intelligence": 75,
+    "speed": 90,
+    "strength": 95,
+    "image": "https://example.com/goku.jpg",
+    "description": "The main protagonist of Dragon Ball series",
+    "abilities": ["Kamehameha", "Instant Transmission", "Super Saiyan"],
+    "personality": "Pure-hearted and always ready for a challenge"
+  }' \
+  "https://api.nikode.com/api/characters"
+```
+
+**Example Response**:
+
+```json
+{
+  "success": true,
+  "message": "Character created successfully",
+  "data": {
+    "id": "char_new_id",
+    "name": "Goku",
+    "anime": "Dragon Ball",
+    "power": 98,
+    "intelligence": 75,
+    "speed": 90,
+    "strength": 95,
+    "image": "https://example.com/goku.jpg",
+    "description": "The main protagonist of Dragon Ball series",
+    "abilities": ["Kamehameha", "Instant Transmission", "Super Saiyan"],
+    "personality": "Pure-hearted and always ready for a challenge",
+    "birthday": "",
+    "height": "",
+    "weight": "",
+    "createdAt": "2024-01-01T00:00:00.000Z",
+    "updatedAt": "2024-01-01T00:00:00.000Z"
+  }
+}
+```
+
+<ApiTester
+  endpoint="/api/characters"
+  method="POST"
+  title="Test POST /api/characters"
+  description="Create a new character (requires moderator or admin role)"
+  showAuthSection={true}
+  defaultBody={{
+    name: "Test Character",
+    anime: "Test Anime",
+    power: 80,
+    intelligence: 70,
+    speed: 75,
+    strength: 85,
+    image: "https://example.com/test.jpg",
+    description: "A test character for API testing",
+    abilities: ["Test Ability 1", "Test Ability 2"],
+    personality: "Test personality description",
+  }}
+  bodySchema={[
+    {
+      name: "name",
+      type: "string",
+      required: true,
+      description: "Character name",
+    },
+    {
+      name: "anime",
+      type: "string",
+      required: true,
+      description: "Anime series",
+    },
+    {
+      name: "power",
+      type: "number",
+      required: true,
+      min: 0,
+      max: 100,
+      description: "Power level (0-100)",
+    },
+    {
+      name: "intelligence",
+      type: "number",
+      required: true,
+      min: 0,
+      max: 100,
+      description: "Intelligence level (0-100)",
+    },
+    {
+      name: "speed",
+      type: "number",
+      required: true,
+      min: 0,
+      max: 100,
+      description: "Speed level (0-100)",
+    },
+    {
+      name: "strength",
+      type: "number",
+      required: true,
+      min: 0,
+      max: 100,
+      description: "Strength level (0-100)",
+    },
+    {
+      name: "image",
+      type: "string",
+      required: true,
+      description: "Character image URL",
+    },
+    {
+      name: "description",
+      type: "string",
+      required: true,
+      description: "Character description",
+    },
+    {
+      name: "abilities",
+      type: "array",
+      required: true,
+      description: "List of abilities",
+    },
+    {
+      name: "personality",
+      type: "string",
+      required: true,
+      description: "Personality description",
+    },
+    { name: "birthday", type: "string", description: "Birthday (optional)" },
+    { name: "height", type: "string", description: "Height (optional)" },
+    { name: "weight", type: "string", description: "Weight (optional)" },
+  ]}
+/>
+
+### GET /api/characters/[id]
+
+Retrieve a specific character by ID.
+
+**Permissions**: All authenticated users
+
+**Path Parameters**:
+
+- `id` (string, required): Character ID
+
+**Example Request**:
+
+```bash
+curl -H "x-api-key: your-api-key" \
+  "https://api.nikode.com/api/characters/char_1"
+```
+
+**Example Response**:
+
+```json
+{
+  "success": true,
+  "message": "Character retrieved successfully",
+  "data": {
+    "id": "char_1",
+    "name": "Naruto Uzumaki",
+    "anime": "Naruto",
+    "power": 95,
+    "intelligence": 70,
+    "speed": 85,
+    "strength": 80,
+    "image": "https://example.com/naruto.jpg",
+    "description": "The main protagonist of Naruto series",
+    "abilities": ["Rasengan", "Shadow Clone Jutsu", "Sage Mode"],
+    "personality": "Determined and never gives up",
+    "birthday": "October 10",
+    "height": "180cm",
+    "weight": "75kg",
+    "createdAt": "2024-01-01T00:00:00.000Z",
+    "updatedAt": "2024-01-01T00:00:00.000Z"
+  }
+}
+```
+
+<ApiTester
+  endpoint="/api/characters/{id}"
+  method="GET"
+  title="Test GET /api/characters/[id]"
+  description="Retrieve a specific character by ID"
+  showAuthSection={true}
+  pathParams={[
+    {
+      name: "id",
+      type: "string",
+      required: true,
+      description: "Character ID",
+      default: "char_1",
+    },
+  ]}
+/>
+
+### PUT /api/characters/[id]
+
+Update a character's information.
+
+**Permissions**: Moderator or Admin
+
+**Path Parameters**:
+
+- `id` (string, required): Character ID
+
+**Request Body** (all fields optional):
+
+```json
+{
+  "name": "string",
+  "anime": "string",
+  "power": "number (0-100)",
+  "intelligence": "number (0-100)",
+  "speed": "number (0-100)",
+  "strength": "number (0-100)",
+  "image": "string (URL)",
+  "description": "string",
+  "abilities": "string[]",
+  "personality": "string",
+  "birthday": "string",
+  "height": "string",
+  "weight": "string"
+}
+```
+
+**Example Request**:
+
+```bash
+curl -X PUT -H "x-api-key: your-api-key" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "power": 97,
+    "abilities": ["Rasengan", "Shadow Clone Jutsu", "Sage Mode", "Six Paths Mode"]
+  }' \
+  "https://api.nikode.com/api/characters/char_1"
+```
+
+**Example Response**:
+
+```json
+{
+  "success": true,
+  "message": "Character updated successfully",
+  "data": {
+    "id": "char_1",
+    "name": "Naruto Uzumaki",
+    "anime": "Naruto",
+    "power": 97,
+    "intelligence": 70,
+    "speed": 85,
+    "strength": 80,
+    "image": "https://example.com/naruto.jpg",
+    "description": "The main protagonist of Naruto series",
+    "abilities": [
+      "Rasengan",
+      "Shadow Clone Jutsu",
+      "Sage Mode",
+      "Six Paths Mode"
+    ],
+    "personality": "Determined and never gives up",
+    "birthday": "October 10",
+    "height": "180cm",
+    "weight": "75kg",
+    "createdAt": "2024-01-01T00:00:00.000Z",
+    "updatedAt": "2024-01-01T12:00:00.000Z"
+  }
+}
+```
+
+<ApiTester
+  endpoint="/api/characters/{id}"
+  method="PUT"
+  title="Test PUT /api/characters/[id]"
+  description="Update a character (requires moderator or admin role)"
+  showAuthSection={true}
+  pathParams={[
+    {
+      name: "id",
+      type: "string",
+      required: true,
+      description: "Character ID",
+      default: "char_1",
+    },
+  ]}
+  defaultBody={{
+    power: 95,
+    abilities: ["Updated Ability 1", "Updated Ability 2"],
+  }}
+  bodySchema={[
+    { name: "name", type: "string", description: "Character name" },
+    { name: "anime", type: "string", description: "Anime series" },
+    {
+      name: "power",
+      type: "number",
+      min: 0,
+      max: 100,
+      description: "Power level (0-100)",
+    },
+    {
+      name: "intelligence",
+      type: "number",
+      min: 0,
+      max: 100,
+      description: "Intelligence level (0-100)",
+    },
+    {
+      name: "speed",
+      type: "number",
+      min: 0,
+      max: 100,
+      description: "Speed level (0-100)",
+    },
+    {
+      name: "strength",
+      type: "number",
+      min: 0,
+      max: 100,
+      description: "Strength level (0-100)",
+    },
+    { name: "image", type: "string", description: "Character image URL" },
+    {
+      name: "description",
+      type: "string",
+      description: "Character description",
+    },
+    { name: "abilities", type: "array", description: "List of abilities" },
+    {
+      name: "personality",
+      type: "string",
+      description: "Personality description",
+    },
+    { name: "birthday", type: "string", description: "Birthday" },
+    { name: "height", type: "string", description: "Height" },
+    { name: "weight", type: "string", description: "Weight" },
+  ]}
+/>
+
+### DELETE /api/characters/[id]
+
+Delete a character.
+
+**Permissions**: Admin only
+
+**Path Parameters**:
+
+- `id` (string, required): Character ID
+
+**Example Request**:
+
+```bash
+curl -X DELETE -H "x-api-key: your-api-key" \
+  "https://api.nikode.com/api/characters/char_1"
+```
+
+**Example Response**:
+
+```json
+{
+  "success": true,
+  "message": "Character deleted successfully",
+  "data": {
+    "id": "char_1",
+    "name": "Naruto Uzumaki",
+    "anime": "Naruto",
+    "power": 95,
+    "intelligence": 70,
+    "speed": 85,
+    "strength": 80,
+    "image": "https://example.com/naruto.jpg",
+    "description": "The main protagonist of Naruto series",
+    "abilities": ["Rasengan", "Shadow Clone Jutsu", "Sage Mode"],
+    "personality": "Determined and never gives up",
+    "birthday": "October 10",
+    "height": "180cm",
+    "weight": "75kg",
+    "createdAt": "2024-01-01T00:00:00.000Z",
+    "updatedAt": "2024-01-01T00:00:00.000Z"
+  }
+}
+```
+
+<ApiTester
+  endpoint="/api/characters/{id}"
+  method="DELETE"
+  title="Test DELETE /api/characters/[id]"
+  description="Delete a character (requires admin role)"
+  showAuthSection={true}
+  pathParams={[
+    {
+      name: "id",
+      type: "string",
+      required: true,
+      description: "Character ID",
+      default: "char_1",
+    },
+  ]}
+/>
+
+## Data Models
+
+### Character Object
+
+```typescript
+interface Character {
+  id: string;
+  name: string;
+  anime: string;
+  power: number; // 0-100
+  intelligence: number; // 0-100
+  speed: number; // 0-100
+  strength: number; // 0-100
+  image: string; // URL
+  description: string;
+  abilities: string[];
+  personality: string;
+  birthday: string;
+  height: string;
+  weight: string;
+  createdAt: string; // ISO 8601
+  updatedAt: string; // ISO 8601
+}
+```
+
+### Create Character Request
+
+```typescript
+interface CreateCharacter {
+  name: string;
+  anime: string;
+  power: number;
+  intelligence: number;
+  speed: number;
+  strength: number;
+  image: string;
+  description: string;
+  abilities: string[];
+  personality: string;
+  birthday?: string;
+  height?: string;
+  weight?: string;
+}
+```
+
+### Update Character Request
+
+```typescript
+interface UpdateCharacter {
+  name?: string;
+  anime?: string;
+  power?: number;
+  intelligence?: number;
+  speed?: number;
+  strength?: number;
+  image?: string;
+  description?: string;
+  abilities?: string[];
+  personality?: string;
+  birthday?: string;
+  height?: string;
+  weight?: string;
+}
+```
+
+## Error Codes
+
+| Code               | Status | Description                             |
+| ------------------ | ------ | --------------------------------------- |
+| `UNAUTHORIZED`     | 401    | Missing or invalid API key              |
+| `FORBIDDEN`        | 403    | Insufficient permissions for operation  |
+| `NOT_FOUND`        | 404    | Character not found                     |
+| `VALIDATION_ERROR` | 400    | Invalid request data                    |
+| `CONFLICT`         | 409    | Character with same name already exists |
+| `INTERNAL_ERROR`   | 500    | Server error                            |
+
+## Rate Limits
+
+- **User**: 100 requests per hour
+- **Moderator**: 500 requests per hour
+- **Admin**: 1000 requests per hour
+
+## Examples
+
+### JavaScript/Node.js
+
+```javascript
+// Get all characters
+const response = await fetch("/api/characters", {
+  headers: {
+    "x-api-key": "your-api-key",
+  },
+});
+const characters = await response.json();
+
+// Create a character
+const newCharacter = await fetch("/api/characters", {
+  method: "POST",
+  headers: {
+    "x-api-key": "your-api-key",
+    "Content-Type": "application/json",
+  },
+  body: JSON.stringify({
+    name: "Goku",
+    anime: "Dragon Ball",
+    power: 98,
+    intelligence: 75,
+    speed: 90,
+    strength: 95,
+    image: "https://example.com/goku.jpg",
+    description: "The main protagonist of Dragon Ball series",
+    abilities: ["Kamehameha", "Instant Transmission", "Super Saiyan"],
+    personality: "Pure-hearted and always ready for a challenge",
+  }),
+});
+```
+
+### Python
+
+```python
+import requests
+
+# Get all characters
+response = requests.get(
+    'https://api.nikode.com/api/characters',
+    headers={'x-api-key': 'your-api-key'}
+)
+characters = response.json()
+
+# Create a character
+new_character = requests.post(
+    'https://api.nikode.com/api/characters',
+    headers={
+        'x-api-key': 'your-api-key',
+        'Content-Type': 'application/json'
+    },
+    json={
+        'name': 'Goku',
+        'anime': 'Dragon Ball',
+        'power': 98,
+        'intelligence': 75,
+        'speed': 90,
+        'strength': 95,
+        'image': 'https://example.com/goku.jpg',
+        'description': 'The main protagonist of Dragon Ball series',
+        'abilities': ['Kamehameha', 'Instant Transmission', 'Super Saiyan'],
+        'personality': 'Pure-hearted and always ready for a challenge'
+    }
+)
+```
+
+### cURL
+
+```bash
+# Get all characters
+curl -H "x-api-key: your-api-key" \
+  "https://api.nikode.com/api/characters"
+
+# Get characters with filtering
+curl -H "x-api-key: your-api-key" \
+  "https://api.nikode.com/api/characters?anime=Naruto&minPower=80&sortBy=power&sortOrder=desc"
+
+# Create a character
+curl -X POST -H "x-api-key: your-api-key" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "name": "Goku",
+    "anime": "Dragon Ball",
+    "power": 98,
+    "intelligence": 75,
+    "speed": 90,
+    "strength": 95,
+    "image": "https://example.com/goku.jpg",
+    "description": "The main protagonist of Dragon Ball series",
+    "abilities": ["Kamehameha", "Instant Transmission", "Super Saiyan"],
+    "personality": "Pure-hearted and always ready for a challenge"
+  }' \
+  "https://api.nikode.com/api/characters"
+```

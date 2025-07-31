@@ -1,0 +1,131 @@
+---
+title: Nikode API Documentation
+description: Complete guide to the Nikode API with interactive testing
+---
+
+## 🚀 Quick Start
+
+The Nikode API provides endpoints for:
+
+- **Characters**: Manage anime character data with power levels and abilities
+- **Users**: User management with role-based permissions
+- **Comments**: Comment system for characters
+- **Search**: Global search across all entities
+
+## 🔐 Authentication
+
+All API endpoints require authentication using API keys. Include your API key in the request headers:
+
+```bash
+# Using x-api-key header
+curl -H "x-api-key: your-api-key" https://api.example.com/characters
+
+# Using Authorization header
+curl -H "Authorization: Bearer your-api-key" https://api.example.com/characters
+```
+
+## 👥 User Roles
+
+- **User**: Basic access to read data
+- **Moderator**: Can create and update characters, manage comments
+- **Admin**: Full access to all endpoints, user management
+
+## 📚 API Reference
+
+<Cards>
+  <Card
+    title="Characters API"
+    href="/docs/characters"
+    description="Manage anime characters with power levels, abilities, and stats"
+  />
+  <Card
+    title="Users API"
+    href="/docs/users"
+    description="User management with role-based permissions and profiles"
+  />
+  <Card
+    title="Comments API"
+    href="/docs/comments"
+    description="Comment system for characters with moderation features"
+  />
+  <Card
+    title="Search API"
+    href="/docs/search"
+    description="Global search across characters, users, and comments"
+  />
+  <Card
+    title="Authentication"
+    href="/docs/authentication"
+    description="API key authentication and role-based authorization"
+  />
+  <Card
+    title="Interactive Testing"
+    href="/docs/testing"
+    description="Test all API endpoints with our interactive playground"
+  />
+</Cards>
+
+## 🛠️ Getting Started
+
+1. **Get an API Key**: Contact the administrator to receive your API key
+2. **Choose your endpoint**: Browse the documentation for the endpoint you need
+3. **Test with our playground**: Use the interactive testing tools to try endpoints
+4. **Integrate**: Use the provided examples to integrate with your application
+
+## 📊 Response Format
+
+All API responses follow a consistent format:
+
+```json
+{
+  "success": true,
+  "message": "Operation completed successfully",
+  "data": {
+    // Response data here
+  },
+  "pagination": {
+    "page": 1,
+    "limit": 10,
+    "total": 100,
+    "totalPages": 10,
+    "hasNext": true,
+    "hasPrev": false
+  }
+}
+```
+
+## ❌ Error Handling
+
+Errors follow a consistent format:
+
+```json
+{
+  "success": false,
+  "error": "ERROR_CODE",
+  "message": "Human readable error message",
+  "statusCode": 400
+}
+```
+
+Common error codes:
+
+- `UNAUTHORIZED` (401): Missing or invalid API key
+- `FORBIDDEN` (403): Insufficient permissions
+- `NOT_FOUND` (404): Resource not found
+- `VALIDATION_ERROR` (400): Invalid request data
+- `CONFLICT` (409): Resource already exists
+- `INTERNAL_ERROR` (500): Server error
+
+## 🔗 Base URL
+
+```
+https://api.nikode.com
+```
+
+## 🆘 Support
+
+Need help? Check out our:
+
+- [Interactive Testing Playground](/docs/testing)
+- [Authentication Guide](/docs/authentication)
+- [Error Code Reference](/docs/errors)

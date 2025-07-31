@@ -1,0 +1,439 @@
+---
+title: Interactive Testing
+description: Test all API endpoints with our interactive playground
+---
+
+## Overview
+
+The interactive testing playground allows you to:
+
+- Test all API endpoints with real requests
+- Try different authentication methods
+- Experiment with request parameters and body data
+- View detailed response information
+- Save and share test configurations
+
+## Getting Started
+
+### 1. Choose an Endpoint
+
+Select the API endpoint you want to test from the dropdown menu. Available endpoints include:
+
+- **Characters API**: `/api/characters`, `/api/characters/[id]`
+- **Users API**: `/api/users`, `/api/users/[id]`
+- **Comments API**: `/api/comments`, `/api/comments/[id]`, `/api/comments/[id]/moderate`
+- **Search API**: `/api/search`
+
+### 2. Set Authentication
+
+Choose your API key from the available options:
+
+- **User Key**: `user_key_123` - Basic read access
+- **Moderator Key**: `moderator_key_456` - Can create/update characters
+- **Admin Key**: `admin_key_789` - Full system access
+- **Invalid Key**: `invalid_key` - Test error handling
+
+### 3. Configure Request
+
+#### For GET Requests:
+
+- Set query parameters (pagination, filtering, sorting)
+- Configure path parameters for dynamic routes
+
+#### For POST/PUT Requests:
+
+- Fill in the request body with JSON data
+- Use the form fields to build the request body
+- Validate required fields
+
+#### For DELETE Requests:
+
+- Set path parameters for the resource to delete
+
+### 4. Send Request
+
+Click the "Send Request" button to execute the API call and view the response.
+
+## Testing Examples
+
+### Test Character Creation
+
+1. **Endpoint**: `POST /api/characters`
+2. **Authentication**: Use `moderator_key_456` or `admin_key_789`
+3. **Request Body**:
+
+```json
+{
+  "name": "Test Character",
+  "anime": "Test Anime",
+  "power": 85,
+  "intelligence": 75,
+  "speed": 80,
+  "strength": 90,
+  "image": "https://example.com/test.jpg",
+  "description": "A test character for API testing",
+  "abilities": ["Test Ability 1", "Test Ability 2"],
+  "personality": "Test personality description"
+}
+```
+
+### Test User Management
+
+1. **Endpoint**: `POST /api/users`
+2. **Authentication**: Use `admin_key_789` (admin only)
+3. **Request Body**:
+
+```json
+{
+  "username": "test_user",
+  "email": "test@example.com",
+  "firstName": "Test",
+  "lastName": "User",
+  "role": "user",
+  "avatar": "https://example.com/avatar.jpg",
+  "isActive": true
+}
+```
+
+### Test Comment Creation
+
+1. **Endpoint**: `POST /api/comments`
+2. **Authentication**: Use any valid API key
+3. **Request Body**:
+
+```json
+{
+  "characterId": "char_1",
+  "content": "This is a test comment about the character.",
+  "rating": 4
+}
+```
+
+### Test Search Functionality
+
+1. **Endpoint**: `GET /api/search`
+2. **Authentication**: Use any valid API key
+3. **Query Parameters**:
+   - `q`: "naruto"
+   - `type`: "all"
+   - `page`: 1
+   - `limit`: 10
+
+## Response Analysis
+
+### Success Response
+
+```json
+{
+  "success": true,
+  "message": "Operation completed successfully",
+  "data": {
+    // Response data here
+  },
+  "pagination": {
+    "page": 1,
+    "limit": 10,
+    "total": 50,
+    "totalPages": 5,
+    "hasNext": true,
+    "hasPrev": false
+  }
+}
+```
+
+### Error Response
+
+```json
+{
+  "success": false,
+  "error": "ERROR_CODE",
+  "message": "Human readable error message",
+  "statusCode": 400
+}
+```
+
+## Testing Scenarios
+
+### Authentication Testing
+
+<ApiTester
+  endpoint="/api/characters"
+  method="GET"
+  title="Test Authentication"
+  description="Test different API keys and see how authentication affects responses"
+  showAuthSection={true}
+  defaultApiKey="demo-api-key-123"
+  availableApiKeys={[
+    {
+      key: "demo-api-key-123",
+      role: "user",
+      description: "User role - read access only",
+    },
+    {
+      key: "test-api-key-456",
+      role: "moderator",
+      description: "Moderator role - can create/update characters",
+    },
+    {
+      key: "admin-api-key-789",
+      role: "admin",
+      description: "Admin role - full access",
+    },
+    {
+      key: "invalid_key",
+      role: "invalid",
+      description: "Invalid key - will return 401",
+    },
+  ]}
+/>
+
+### Permission Testing
+
+<ApiTester
+  endpoint="/api/users"
+  method="POST"
+  title="Test Permissions"
+  description="Test role-based permissions by trying to create users with different API keys"
+  showAuthSection={true}
+  defaultApiKey="demo-api-key-123"
+  defaultBody={{
+    username: "test_user",
+    email: "test@example.com",
+    firstName: "Test",
+    lastName: "User",
+    role: "user",
+  }}
+  availableApiKeys={[
+    {
+      key: "demo-api-key-123",
+      role: "user",
+      description: "Should fail - user cannot create users",
+    },
+    {
+      key: "test-api-key-456",
+      role: "moderator",
+      description: "Should fail - moderator cannot create users",
+    },
+    {
+      key: "admin-api-key-789",
+      role: "admin",
+      description: "Should succeed - admin can create users",
+    },
+  ]}
+/>
+
+### Error Handling Testing
+
+<ApiTester
+  endpoint="/api/characters"
+  method="POST"
+  title="Test Error Handling"
+  description="Test validation errors by submitting invalid data"
+  showAuthSection={true}
+  defaultApiKey="test-api-key-456"
+  defaultBody={{
+    name: "",
+    anime: "",
+    power: 150,
+    intelligence: -10,
+    speed: 200,
+    strength: 300,
+  }}
+  bodySchema={[
+    {
+      name: "name",
+      type: "string",
+      required: true,
+      description: "Character name (empty will cause error)",
+    },
+    {
+      name: "anime",
+      type: "string",
+      required: true,
+      description: "Anime series (empty will cause error)",
+    },
+    {
+      name: "power",
+      type: "number",
+      min: 0,
+      max: 100,
+      description: "Power level (150 will cause error)",
+    },
+    {
+      name: "intelligence",
+      type: "number",
+      min: 0,
+      max: 100,
+      description: "Intelligence level (-10 will cause error)",
+    },
+    {
+      name: "speed",
+      type: "number",
+      min: 0,
+      max: 100,
+      description: "Speed level (200 will cause error)",
+    },
+    {
+      name: "strength",
+      type: "number",
+      min: 0,
+      max: 100,
+      description: "Strength level (300 will cause error)",
+    },
+  ]}
+/>
+
+## Advanced Testing Features
+
+### Request History
+
+The playground maintains a history of your requests, allowing you to:
+
+- Review previous requests
+- Re-run successful requests
+- Compare different responses
+- Export request configurations
+
+### Response Analysis
+
+Each response includes:
+
+- **Status Code**: HTTP status code
+- **Response Time**: How long the request took
+- **Headers**: Response headers
+- **Body**: Formatted JSON response
+- **Error Details**: Detailed error information if applicable
+
+### Request Validation
+
+The playground validates requests before sending:
+
+- Required fields are checked
+- Data types are validated
+- Format requirements are enforced
+- Authentication is verified
+
+## Testing Best Practices
+
+### 1. Start with Simple Requests
+
+Begin with GET requests to understand the API structure before testing more complex operations.
+
+### 2. Test Error Conditions
+
+Don't just test success cases - also test:
+
+- Invalid authentication
+- Missing required fields
+- Invalid data types
+- Permission violations
+
+### 3. Use Realistic Data
+
+When testing POST/PUT requests, use realistic data that matches the expected format.
+
+### 4. Test Pagination
+
+For endpoints that return lists, test pagination parameters to ensure they work correctly.
+
+### 5. Verify Response Format
+
+Always check that responses match the documented format and include expected fields.
+
+## Common Testing Scenarios
+
+### Scenario 1: Character Management Workflow
+
+1. **Create a character** (POST /api/characters)
+2. **Retrieve the character** (GET /api/characters/[id])
+3. **Update the character** (PUT /api/characters/[id])
+4. **Delete the character** (DELETE /api/characters/[id])
+
+### Scenario 2: User Management Workflow
+
+1. **Create a user** (POST /api/users)
+2. **Retrieve the user** (GET /api/users/[id])
+3. **Update the user** (PUT /api/users/[id])
+4. **Delete the user** (DELETE /api/users/[id])
+
+### Scenario 3: Comment Moderation Workflow
+
+1. **Create a comment** (POST /api/comments)
+2. **Retrieve the comment** (GET /api/comments/[id])
+3. **Moderate the comment** (PATCH /api/comments/[id]/moderate)
+4. **Delete the comment** (DELETE /api/comments/[id])
+
+### Scenario 4: Search and Filtering
+
+1. **Search for characters** (GET /api/search?q=naruto&type=characters)
+2. **Filter by anime** (GET /api/characters?anime=Naruto)
+3. **Sort by power** (GET /api/characters?sortBy=power&sortOrder=desc)
+4. **Paginate results** (GET /api/characters?page=2&limit=5)
+
+## Troubleshooting
+
+### Common Issues
+
+1. **401 Unauthorized**
+
+   - Check that you're using a valid API key
+   - Ensure the API key is properly formatted in headers
+
+2. **403 Forbidden**
+
+   - Verify your role has permission for the operation
+   - Check if you're trying to access admin-only endpoints
+
+3. **400 Bad Request**
+
+   - Review the request body for required fields
+   - Check data types and format requirements
+   - Validate JSON syntax
+
+4. **404 Not Found**
+   - Verify the endpoint URL is correct
+   - Check if the resource ID exists
+
+### Debug Tips
+
+1. **Use the Network Tab**: Open browser dev tools to see the actual HTTP requests
+2. **Check Response Headers**: Look for rate limiting and other important headers
+3. **Validate JSON**: Ensure request body is valid JSON
+4. **Test Incrementally**: Start with simple requests and build complexity
+
+## Export and Share
+
+### Export Request Configuration
+
+You can export your test configurations to share with others:
+
+```json
+{
+  "endpoint": "/api/characters",
+  "method": "POST",
+  "headers": {
+    "x-api-key": "moderator_key_456",
+    "Content-Type": "application/json"
+  },
+  "body": {
+    "name": "Test Character",
+    "anime": "Test Anime",
+    "power": 85
+  }
+}
+```
+
+### Share Test Results
+
+Share successful test configurations with your team to ensure consistent testing across different environments.
+
+## Support
+
+If you encounter issues with the testing playground:
+
+1. **Check the console** for JavaScript errors
+2. **Verify your internet connection**
+3. **Try refreshing the page**
+4. **Contact support** if problems persist
+
+The interactive testing playground is designed to make API testing easy and accessible. Use it to explore the API, test your integrations, and verify your understanding of the endpoints.

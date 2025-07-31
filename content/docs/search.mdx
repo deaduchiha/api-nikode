@@ -1,0 +1,385 @@
+---
+title: Search API
+description: Global search across characters, users, and comments
+---
+
+## Overview
+
+The Search API allows you to:
+
+- Search across characters, users, and comments
+- Filter by entity type
+- Get paginated search results
+- Sort results by relevance or date
+
+## Authentication
+
+All endpoints require API key authentication. Include your API key in the request headers:
+
+```bash
+x-api-key: your-api-key
+# or
+Authorization: Bearer your-api-key
+```
+
+## Endpoints
+
+### GET /api/search
+
+Perform a global search across all entities.
+
+**Permissions**: All authenticated users
+
+**Query Parameters**:
+
+- `q` (string, required): Search query
+- `type` (string, optional): Filter by entity type (characters, users, comments, all)
+- `page` (number, default: 1): Page number for pagination
+- `limit` (number, default: 10, max: 100): Number of items per page
+- `sortBy` (string, default: "relevance"): Sort field (relevance, createdAt, updatedAt)
+- `sortOrder` (string, default: "desc"): Sort order (asc, desc)
+
+**Example Request**:
+
+```bash
+curl -H "x-api-key: your-api-key" \
+  "https://api.nikode.com/api/search?q=naruto&type=characters&page=1&limit=10"
+```
+
+**Example Response**:
+
+```json
+{
+  "success": true,
+  "message": "Search completed successfully",
+  "data": {
+    "query": "naruto",
+    "totalResults": 5,
+    "results": [
+      {
+        "type": "character",
+        "id": "char_1",
+        "name": "Naruto Uzumaki",
+        "anime": "Naruto",
+        "power": 95,
+        "intelligence": 70,
+        "speed": 85,
+        "strength": 80,
+        "image": "https://example.com/naruto.jpg",
+        "description": "The main protagonist of Naruto series",
+        "abilities": ["Rasengan", "Shadow Clone Jutsu", "Sage Mode"],
+        "personality": "Determined and never gives up",
+        "birthday": "October 10",
+        "height": "180cm",
+        "weight": "75kg",
+        "createdAt": "2024-01-01T00:00:00.000Z",
+        "updatedAt": "2024-01-01T00:00:00.000Z",
+        "relevanceScore": 0.95
+      },
+      {
+        "type": "comment",
+        "id": "comment_1",
+        "characterId": "char_1",
+        "userId": "user_1",
+        "content": "Naruto is my favorite character!",
+        "rating": 5,
+        "status": "approved",
+        "createdAt": "2024-01-01T00:00:00.000Z",
+        "updatedAt": "2024-01-01T00:00:00.000Z",
+        "relevanceScore": 0.85
+      }
+    ],
+    "facets": {
+      "types": {
+        "character": 3,
+        "comment": 2,
+        "user": 0
+      },
+      "anime": {
+        "Naruto": 3,
+        "Dragon Ball": 1,
+        "One Piece": 1
+      }
+    }
+  },
+  "pagination": {
+    "page": 1,
+    "limit": 10,
+    "total": 5,
+    "totalPages": 1,
+    "hasNext": false,
+    "hasPrev": false
+  }
+}
+```
+
+<ApiTester
+  endpoint="/api/search"
+  method="GET"
+  title="Test GET /api/search"
+  description="Perform a global search across all entities"
+  showAuthSection={true}
+  defaultParams={{
+    q: "naruto",
+    type: "all",
+    page: 1,
+    limit: 10,
+    sortBy: "relevance",
+    sortOrder: "desc",
+  }}
+  queryParams={[
+    { name: "q", type: "string", required: true, description: "Search query" },
+    {
+      name: "type",
+      type: "select",
+      options: ["all", "characters", "users", "comments"],
+      default: "all",
+      description: "Filter by entity type",
+    },
+    { name: "page", type: "number", default: 1, description: "Page number" },
+    {
+      name: "limit",
+      type: "number",
+      default: 10,
+      description: "Items per page",
+    },
+    {
+      name: "sortBy",
+      type: "select",
+      options: ["relevance", "createdAt", "updatedAt"],
+      default: "relevance",
+      description: "Sort field",
+    },
+    {
+      name: "sortOrder",
+      type: "select",
+      options: ["asc", "desc"],
+      default: "desc",
+      description: "Sort order",
+    },
+  ]}
+/>
+
+## Search Features
+
+### Search Query Types
+
+The search API supports various query types:
+
+1. **Text Search**: Search by name, description, content
+
+   ```
+   q=naruto
+   q="dragon ball"
+   ```
+
+2. **Entity-Specific Search**: Filter by entity type
+
+   ```
+   type=characters
+   type=users
+   type=comments
+   type=all
+   ```
+
+3. **Combined Search**: Use multiple parameters
+   ```
+   q=goku&type=characters&sortBy=power&sortOrder=desc
+   ```
+
+### Search Results
+
+Each search result includes:
+
+- **type**: The entity type (character, user, comment)
+- **id**: Unique identifier
+- **relevanceScore**: How well the result matches the query (0-1)
+- **Entity-specific fields**: All fields from the original entity
+
+### Faceted Search
+
+Search results include faceted information:
+
+- **types**: Count of results by entity type
+- **anime**: Count of character results by anime series
+- **roles**: Count of user results by role
+- **status**: Count of comment results by status
+
+## Data Models
+
+### Search Result
+
+```typescript
+interface SearchResult {
+  type: "character" | "user" | "comment";
+  id: string;
+  relevanceScore: number;
+  // ... entity-specific fields
+}
+```
+
+### Search Response
+
+```typescript
+interface SearchResponse {
+  query: string;
+  totalResults: number;
+  results: SearchResult[];
+  facets: {
+    types: Record<string, number>;
+    anime?: Record<string, number>;
+    roles?: Record<string, number>;
+    status?: Record<string, number>;
+  };
+}
+```
+
+## Search Examples
+
+### Character Search
+
+```bash
+# Search for characters by name
+curl -H "x-api-key: your-api-key" \
+  "https://api.nikode.com/api/search?q=goku&type=characters"
+
+# Search for characters by anime
+curl -H "x-api-key: your-api-key" \
+  "https://api.nikode.com/api/search?q=dragon&type=characters"
+
+# Search for powerful characters
+curl -H "x-api-key: your-api-key" \
+  "https://api.nikode.com/api/search?q=power&type=characters&sortBy=power&sortOrder=desc"
+```
+
+### User Search
+
+```bash
+# Search for users by username
+curl -H "x-api-key: your-api-key" \
+  "https://api.nikode.com/api/search?q=admin&type=users"
+
+# Search for users by role
+curl -H "x-api-key: your-api-key" \
+  "https://api.nikode.com/api/search?q=moderator&type=users"
+```
+
+### Comment Search
+
+```bash
+# Search for comments by content
+curl -H "x-api-key: your-api-key" \
+  "https://api.nikode.com/api/search?q=amazing&type=comments"
+
+# Search for approved comments
+curl -H "x-api-key: your-api-key" \
+  "https://api.nikode.com/api/search?q=great&type=comments&status=approved"
+```
+
+### Global Search
+
+```bash
+# Search across all entities
+curl -H "x-api-key: your-api-key" \
+  "https://api.nikode.com/api/search?q=naruto&type=all"
+
+# Search with pagination
+curl -H "x-api-key: your-api-key" \
+  "https://api.nikode.com/api/search?q=anime&page=2&limit=20"
+```
+
+## Error Codes
+
+| Code               | Status | Description                |
+| ------------------ | ------ | -------------------------- |
+| `UNAUTHORIZED`     | 401    | Missing or invalid API key |
+| `VALIDATION_ERROR` | 400    | Invalid search parameters  |
+| `INTERNAL_ERROR`   | 500    | Server error               |
+
+## Rate Limits
+
+- **User**: 100 requests per hour
+- **Moderator**: 500 requests per hour
+- **Admin**: 1000 requests per hour
+
+## Examples
+
+### JavaScript/Node.js
+
+```javascript
+// Search for characters
+const response = await fetch("/api/search?q=goku&type=characters", {
+  headers: {
+    "x-api-key": "your-api-key",
+  },
+});
+const searchResults = await response.json();
+
+// Global search
+const globalSearch = await fetch(
+  "/api/search?q=anime&type=all&page=1&limit=10",
+  {
+    headers: {
+      "x-api-key": "your-api-key",
+    },
+  }
+);
+const results = await globalSearch.json();
+```
+
+### Python
+
+```python
+import requests
+
+# Search for characters
+response = requests.get(
+    'https://api.nikode.com/api/search',
+    params={'q': 'goku', 'type': 'characters'},
+    headers={'x-api-key': 'your-api-key'}
+)
+search_results = response.json()
+
+# Global search
+global_search = requests.get(
+    'https://api.nikode.com/api/search',
+    params={'q': 'anime', 'type': 'all', 'page': 1, 'limit': 10},
+    headers={'x-api-key': 'your-api-key'}
+)
+results = global_search.json()
+```
+
+### cURL
+
+```bash
+# Search for characters
+curl -H "x-api-key: your-api-key" \
+  "https://api.nikode.com/api/search?q=goku&type=characters"
+
+# Search for users
+curl -H "x-api-key: your-api-key" \
+  "https://api.nikode.com/api/search?q=admin&type=users"
+
+# Search for comments
+curl -H "x-api-key: your-api-key" \
+  "https://api.nikode.com/api/search?q=amazing&type=comments"
+
+# Global search with pagination
+curl -H "x-api-key: your-api-key" \
+  "https://api.nikode.com/api/search?q=anime&type=all&page=1&limit=10&sortBy=relevance&sortOrder=desc"
+```
+
+## Search Tips
+
+1. **Use quotes for exact phrases**: `q="dragon ball"`
+2. **Combine with entity filters**: `q=naruto&type=characters`
+3. **Use pagination for large results**: `page=2&limit=20`
+4. **Sort by relevance**: `sortBy=relevance&sortOrder=desc`
+5. **Check facets for insights**: Look at the `facets` object in responses
+
+## Performance Notes
+
+- Search results are cached for 5 minutes
+- Complex queries may take longer to process
+- Use specific entity types when possible for better performance
+- Pagination is recommended for large result sets

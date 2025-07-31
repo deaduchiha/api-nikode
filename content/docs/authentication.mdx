@@ -1,0 +1,383 @@
+---
+title: Authentication
+description: API key authentication and role-based authorization
+---
+
+## Overview
+
+The Nikode API uses API key-based authentication with role-based authorization. All requests must include a valid API key in the request headers.
+
+## API Key Authentication
+
+### Getting an API Key
+
+API keys are provided by the system administrator. Contact your administrator to receive your API key.
+
+### Using API Keys
+
+Include your API key in the request headers using one of these methods:
+
+```bash
+# Method 1: Using x-api-key header
+x-api-key: your-api-key-here
+
+# Method 2: Using Authorization header
+Authorization: Bearer your-api-key-here
+```
+
+### Example Requests
+
+```bash
+# cURL with x-api-key header
+curl -H "x-api-key: your-api-key" \
+  "https://api.nikode.com/api/characters"
+
+# cURL with Authorization header
+curl -H "Authorization: Bearer your-api-key" \
+  "https://api.nikode.com/api/characters"
+
+# JavaScript/Node.js
+const response = await fetch('/api/characters', {
+  headers: {
+    'x-api-key': 'your-api-key'
+  }
+});
+
+# Python
+import requests
+response = requests.get(
+    'https://api.nikode.com/api/characters',
+    headers={'x-api-key': 'your-api-key'}
+)
+```
+
+## User Roles
+
+The API supports three user roles with different permission levels:
+
+### User Role
+
+**Permissions**:
+
+- Read access to characters, users, and comments
+- Create comments
+- Update own comments
+- Delete own comments
+- Search across all entities
+
+**Rate Limit**: 100 requests per hour
+
+**Example API Key**: `user_key_123`
+
+### Moderator Role
+
+**Permissions**:
+
+- All User permissions
+- Create, update, and delete characters
+- Moderate comments (approve/reject)
+- View all users
+- Update comment content
+
+**Rate Limit**: 500 requests per hour
+
+**Example API Key**: `moderator_key_456`
+
+### Admin Role
+
+**Permissions**:
+
+- All Moderator permissions
+- Create, update, and delete users
+- Delete any comments
+- Full system access
+
+**Rate Limit**: 1000 requests per hour
+
+**Example API Key**: `admin_key_789`
+
+## Role Hierarchy
+
+```
+Admin > Moderator > User
+```
+
+Higher roles inherit all permissions from lower roles.
+
+## Permission Matrix
+
+| Endpoint                          | User     | Moderator | Admin |
+| --------------------------------- | -------- | --------- | ----- |
+| GET /api/characters               | ✅       | ✅        | ✅    |
+| POST /api/characters              | ❌       | ✅        | ✅    |
+| PUT /api/characters/[id]          | ❌       | ✅        | ✅    |
+| DELETE /api/characters/[id]       | ❌       | ❌        | ✅    |
+| GET /api/users                    | ❌       | ✅        | ✅    |
+| POST /api/users                   | ❌       | ❌        | ✅    |
+| PUT /api/users/[id]               | ❌       | ❌        | ✅    |
+| DELETE /api/users/[id]            | ❌       | ❌        | ✅    |
+| GET /api/comments                 | ✅       | ✅        | ✅    |
+| POST /api/comments                | ✅       | ✅        | ✅    |
+| PUT /api/comments/[id]            | Own only | ✅        | ✅    |
+| DELETE /api/comments/[id]         | Own only | ✅        | ✅    |
+| PATCH /api/comments/[id]/moderate | ❌       | ✅        | ✅    |
+| GET /api/search                   | ✅       | ✅        | ✅    |
+
+## Error Responses
+
+### Unauthorized (401)
+
+```json
+{
+  "success": false,
+  "error": "UNAUTHORIZED",
+  "message": "Authentication required",
+  "statusCode": 401
+}
+```
+
+**Causes**:
+
+- Missing API key header
+- Invalid API key
+- Expired API key
+
+### Forbidden (403)
+
+```json
+{
+  "success": false,
+  "error": "FORBIDDEN",
+  "message": "Insufficient permissions to perform this operation",
+  "statusCode": 403
+}
+```
+
+**Causes**:
+
+- User role doesn't have permission for the requested operation
+- Trying to delete admin users
+- Trying to delete comments without proper permissions
+
+## Security Best Practices
+
+### 1. Keep API Keys Secure
+
+```javascript
+// ❌ Don't expose API keys in client-side code
+const apiKey = "your-api-key"; // Visible in browser
+
+// ✅ Use environment variables
+const apiKey = process.env.API_KEY; // Server-side only
+```
+
+### 2. Use HTTPS
+
+Always use HTTPS in production to encrypt API key transmission.
+
+### 3. Rotate API Keys
+
+Regularly rotate your API keys and invalidate old ones.
+
+### 4. Monitor Usage
+
+Monitor your API usage to detect unauthorized access.
+
+## Testing Authentication
+
+<ApiTester
+  endpoint="/api/characters"
+  method="GET"
+  title="Test Authentication"
+  description="Test API key authentication with different roles"
+  showAuthSection={true}
+  defaultApiKey="demo-api-key-123"
+  availableApiKeys={[
+    {
+      key: "demo-api-key-123",
+      role: "user",
+      description: "User role - read access only",
+    },
+    {
+      key: "test-api-key-456",
+      role: "moderator",
+      description: "Moderator role - can create/update characters",
+    },
+    {
+      key: "admin-api-key-789",
+      role: "admin",
+      description: "Admin role - full access",
+    },
+    {
+      key: "invalid_key",
+      role: "invalid",
+      description: "Invalid key - will return 401",
+    },
+  ]}
+/>
+
+## Rate Limiting
+
+API requests are rate-limited based on user role:
+
+| Role      | Requests per Hour | Burst Limit    |
+| --------- | ----------------- | -------------- |
+| User      | 100               | 10 per minute  |
+| Moderator | 500               | 50 per minute  |
+| Admin     | 1000              | 100 per minute |
+
+### Rate Limit Headers
+
+Responses include rate limit information:
+
+```http
+X-RateLimit-Limit: 100
+X-RateLimit-Remaining: 95
+X-RateLimit-Reset: 1640995200
+```
+
+### Rate Limit Exceeded (429)
+
+```json
+{
+  "success": false,
+  "error": "RATE_LIMIT_EXCEEDED",
+  "message": "Rate limit exceeded. Please try again later.",
+  "statusCode": 429
+}
+```
+
+## API Key Management
+
+### Creating API Keys
+
+API keys are created by administrators through the admin interface.
+
+### Revoking API Keys
+
+Contact your administrator to revoke compromised API keys.
+
+### API Key Format
+
+API keys follow this format:
+
+- User keys: `user_` prefix
+- Moderator keys: `moderator_` prefix
+- Admin keys: `admin_` prefix
+
+## Examples
+
+### JavaScript/Node.js
+
+```javascript
+// Basic authentication
+const apiKey = "your-api-key";
+const headers = {
+  "x-api-key": apiKey,
+  "Content-Type": "application/json",
+};
+
+// GET request
+const response = await fetch("/api/characters", { headers });
+const data = await response.json();
+
+// POST request
+const createResponse = await fetch("/api/characters", {
+  method: "POST",
+  headers,
+  body: JSON.stringify({
+    name: "Goku",
+    anime: "Dragon Ball",
+    power: 98,
+    // ... other fields
+  }),
+});
+```
+
+### Python
+
+```python
+import requests
+
+# Basic authentication
+api_key = 'your-api-key'
+headers = {
+    'x-api-key': api_key,
+    'Content-Type': 'application/json'
+}
+
+# GET request
+response = requests.get(
+    'https://api.nikode.com/api/characters',
+    headers=headers
+)
+data = response.json()
+
+# POST request
+create_response = requests.post(
+    'https://api.nikode.com/api/characters',
+    headers=headers,
+    json={
+        'name': 'Goku',
+        'anime': 'Dragon Ball',
+        'power': 98,
+        # ... other fields
+    }
+)
+```
+
+### cURL
+
+```bash
+# GET request
+curl -H "x-api-key: your-api-key" \
+  "https://api.nikode.com/api/characters"
+
+# POST request
+curl -X POST -H "x-api-key: your-api-key" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "name": "Goku",
+    "anime": "Dragon Ball",
+    "power": 98
+  }' \
+  "https://api.nikode.com/api/characters"
+```
+
+## Troubleshooting
+
+### Common Issues
+
+1. **401 Unauthorized**
+
+   - Check if API key is included in headers
+   - Verify API key is valid and not expired
+   - Ensure correct header format
+
+2. **403 Forbidden**
+
+   - Check if your role has permission for the operation
+   - Verify you're using the correct API key for your role
+
+3. **429 Rate Limit Exceeded**
+   - Wait for rate limit to reset
+   - Consider upgrading your role for higher limits
+   - Implement exponential backoff in your client
+
+### Debugging
+
+Enable debug logging to see authentication details:
+
+```bash
+curl -v -H "x-api-key: your-api-key" \
+  "https://api.nikode.com/api/characters"
+```
+
+## Support
+
+If you're having authentication issues:
+
+1. Check your API key format and validity
+2. Verify your role has the required permissions
+3. Contact your administrator for assistance
+4. Check the API status page for any service issues

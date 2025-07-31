@@ -1,0 +1,664 @@
+---
+title: Comments API
+description: Comment system for characters with moderation features
+---
+
+## Overview
+
+The Comments API allows you to:
+
+- Retrieve comments with pagination and filtering
+- Get individual comment details
+- Create new comments (All authenticated users)
+- Update comment content (Comment author or Moderator+)
+- Delete comments (Comment author, Moderator, or Admin)
+- Moderate comments (Moderator+)
+
+## Authentication
+
+All endpoints require API key authentication. Include your API key in the request headers:
+
+```bash
+x-api-key: your-api-key
+# or
+Authorization: Bearer your-api-key
+```
+
+## Endpoints
+
+### GET /api/comments
+
+Retrieve a list of comments with optional filtering, sorting, and pagination.
+
+**Permissions**: All authenticated users
+
+**Query Parameters**:
+
+- `page` (number, default: 1): Page number for pagination
+- `limit` (number, default: 10, max: 100): Number of items per page
+- `characterId` (string, optional): Filter by character ID
+- `userId` (string, optional): Filter by user ID
+- `status` (string, optional): Filter by status (pending, approved, rejected)
+- `sortBy` (string, default: "createdAt"): Sort field (createdAt, updatedAt, rating)
+- `sortOrder` (string, default: "desc"): Sort order (asc, desc)
+
+**Example Request**:
+
+```bash
+curl -H "x-api-key: your-api-key" \
+  "https://api.nikode.com/api/comments?page=1&limit=10&characterId=char_1&status=approved"
+```
+
+**Example Response**:
+
+```json
+{
+  "success": true,
+  "message": "Comments retrieved successfully",
+  "data": [
+    {
+      "id": "comment_1",
+      "characterId": "char_1",
+      "userId": "user_1",
+      "content": "This character is amazing! Love their abilities.",
+      "rating": 5,
+      "status": "approved",
+      "createdAt": "2024-01-01T00:00:00.000Z",
+      "updatedAt": "2024-01-01T00:00:00.000Z"
+    }
+  ],
+  "pagination": {
+    "page": 1,
+    "limit": 10,
+    "total": 25,
+    "totalPages": 3,
+    "hasNext": true,
+    "hasPrev": false
+  }
+}
+```
+
+<ApiTester
+  endpoint="/api/comments"
+  method="GET"
+  title="Test GET /api/comments"
+  description="Retrieve comments with filtering and pagination"
+  showAuthSection={true}
+  defaultParams={{
+    page: 1,
+    limit: 10,
+    sortBy: "createdAt",
+    sortOrder: "desc",
+  }}
+  queryParams={[
+    { name: "page", type: "number", default: 1, description: "Page number" },
+    {
+      name: "limit",
+      type: "number",
+      default: 10,
+      description: "Items per page",
+    },
+    {
+      name: "characterId",
+      type: "string",
+      description: "Filter by character ID",
+    },
+    { name: "userId", type: "string", description: "Filter by user ID" },
+    {
+      name: "status",
+      type: "select",
+      options: ["pending", "approved", "rejected"],
+      description: "Filter by status",
+    },
+    {
+      name: "sortBy",
+      type: "select",
+      options: ["createdAt", "updatedAt", "rating"],
+      default: "createdAt",
+      description: "Sort field",
+    },
+    {
+      name: "sortOrder",
+      type: "select",
+      options: ["asc", "desc"],
+      default: "desc",
+      description: "Sort order",
+    },
+  ]}
+/>
+
+### POST /api/comments
+
+Create a new comment.
+
+**Permissions**: All authenticated users
+
+**Request Body**:
+
+```json
+{
+  "characterId": "string (required)",
+  "content": "string (required, max 1000 characters)",
+  "rating": "number (optional, 1-5)"
+}
+```
+
+**Example Request**:
+
+```bash
+curl -X POST -H "x-api-key: your-api-key" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "characterId": "char_1",
+    "content": "This character is absolutely incredible! Their power level and abilities are unmatched.",
+    "rating": 5
+  }' \
+  "https://api.nikode.com/api/comments"
+```
+
+**Example Response**:
+
+```json
+{
+  "success": true,
+  "message": "Comment created successfully",
+  "data": {
+    "id": "comment_new_id",
+    "characterId": "char_1",
+    "userId": "user_1",
+    "content": "This character is absolutely incredible! Their power level and abilities are unmatched.",
+    "rating": 5,
+    "status": "pending",
+    "createdAt": "2024-01-01T00:00:00.000Z",
+    "updatedAt": "2024-01-01T00:00:00.000Z"
+  }
+}
+```
+
+<ApiTester
+  endpoint="/api/comments"
+  method="POST"
+  title="Test POST /api/comments"
+  description="Create a new comment"
+  showAuthSection={true}
+  defaultBody={{
+    characterId: "char_1",
+    content: "This is a test comment about the character.",
+    rating: 4,
+  }}
+  bodySchema={[
+    {
+      name: "characterId",
+      type: "string",
+      required: true,
+      description: "Character ID",
+    },
+    {
+      name: "content",
+      type: "string",
+      required: true,
+      maxLength: 1000,
+      description: "Comment content (max 1000 characters)",
+    },
+    {
+      name: "rating",
+      type: "number",
+      min: 1,
+      max: 5,
+      description: "Rating (1-5, optional)",
+    },
+  ]}
+/>
+
+### GET /api/comments/[id]
+
+Retrieve a specific comment by ID.
+
+**Permissions**: All authenticated users
+
+**Path Parameters**:
+
+- `id` (string, required): Comment ID
+
+**Example Request**:
+
+```bash
+curl -H "x-api-key: your-api-key" \
+  "https://api.nikode.com/api/comments/comment_1"
+```
+
+**Example Response**:
+
+```json
+{
+  "success": true,
+  "message": "Comment retrieved successfully",
+  "data": {
+    "id": "comment_1",
+    "characterId": "char_1",
+    "userId": "user_1",
+    "content": "This character is amazing! Love their abilities.",
+    "rating": 5,
+    "status": "approved",
+    "createdAt": "2024-01-01T00:00:00.000Z",
+    "updatedAt": "2024-01-01T00:00:00.000Z"
+  }
+}
+```
+
+<ApiTester
+  endpoint="/api/comments/{id}"
+  method="GET"
+  title="Test GET /api/comments/[id]"
+  description="Retrieve a specific comment by ID"
+  showAuthSection={true}
+  pathParams={[
+    {
+      name: "id",
+      type: "string",
+      required: true,
+      description: "Comment ID",
+      default: "comment_1",
+    },
+  ]}
+/>
+
+### PUT /api/comments/[id]
+
+Update a comment's content.
+
+**Permissions**: Comment author or Moderator+
+
+**Path Parameters**:
+
+- `id` (string, required): Comment ID
+
+**Request Body**:
+
+```json
+{
+  "content": "string (required, max 1000 characters)",
+  "rating": "number (optional, 1-5)"
+}
+```
+
+**Example Request**:
+
+```bash
+curl -X PUT -H "x-api-key: your-api-key" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "content": "Updated comment content with more details about the character.",
+    "rating": 4
+  }' \
+  "https://api.nikode.com/api/comments/comment_1"
+```
+
+**Example Response**:
+
+```json
+{
+  "success": true,
+  "message": "Comment updated successfully",
+  "data": {
+    "id": "comment_1",
+    "characterId": "char_1",
+    "userId": "user_1",
+    "content": "Updated comment content with more details about the character.",
+    "rating": 4,
+    "status": "approved",
+    "createdAt": "2024-01-01T00:00:00.000Z",
+    "updatedAt": "2024-01-01T12:00:00.000Z"
+  }
+}
+```
+
+<ApiTester
+  endpoint="/api/comments/{id}"
+  method="PUT"
+  title="Test PUT /api/comments/[id]"
+  description="Update a comment (requires comment author or moderator+ role)"
+  showAuthSection={true}
+  pathParams={[
+    {
+      name: "id",
+      type: "string",
+      required: true,
+      description: "Comment ID",
+      default: "comment_1",
+    },
+  ]}
+  defaultBody={{
+    content: "Updated comment content with more details.",
+    rating: 4,
+  }}
+  bodySchema={[
+    {
+      name: "content",
+      type: "string",
+      required: true,
+      maxLength: 1000,
+      description: "Comment content (max 1000 characters)",
+    },
+    {
+      name: "rating",
+      type: "number",
+      min: 1,
+      max: 5,
+      description: "Rating (1-5, optional)",
+    },
+  ]}
+/>
+
+### DELETE /api/comments/[id]
+
+Delete a comment.
+
+**Permissions**: Comment author, Moderator, or Admin
+
+**Path Parameters**:
+
+- `id` (string, required): Comment ID
+
+**Example Request**:
+
+```bash
+curl -X DELETE -H "x-api-key: your-api-key" \
+  "https://api.nikode.com/api/comments/comment_1"
+```
+
+**Example Response**:
+
+```json
+{
+  "success": true,
+  "message": "Comment deleted successfully",
+  "data": {
+    "id": "comment_1",
+    "characterId": "char_1",
+    "userId": "user_1",
+    "content": "This character is amazing! Love their abilities.",
+    "rating": 5,
+    "status": "approved",
+    "createdAt": "2024-01-01T00:00:00.000Z",
+    "updatedAt": "2024-01-01T00:00:00.000Z"
+  }
+}
+```
+
+<ApiTester
+  endpoint="/api/comments/{id}"
+  method="DELETE"
+  title="Test DELETE /api/comments/[id]"
+  description="Delete a comment (requires comment author, moderator, or admin role)"
+  showAuthSection={true}
+  pathParams={[
+    {
+      name: "id",
+      type: "string",
+      required: true,
+      description: "Comment ID",
+      default: "comment_1",
+    },
+  ]}
+/>
+
+### PATCH /api/comments/[id]/moderate
+
+Moderate a comment (approve/reject).
+
+**Permissions**: Moderator or Admin
+
+**Path Parameters**:
+
+- `id` (string, required): Comment ID
+
+**Request Body**:
+
+```json
+{
+  "status": "string (required, 'approved' or 'rejected')",
+  "reason": "string (optional, reason for rejection)"
+}
+```
+
+**Example Request**:
+
+```bash
+curl -X PATCH -H "x-api-key: your-api-key" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "status": "approved"
+  }' \
+  "https://api.nikode.com/api/comments/comment_1/moderate"
+```
+
+**Example Response**:
+
+```json
+{
+  "success": true,
+  "message": "Comment moderated successfully",
+  "data": {
+    "id": "comment_1",
+    "characterId": "char_1",
+    "userId": "user_1",
+    "content": "This character is amazing! Love their abilities.",
+    "rating": 5,
+    "status": "approved",
+    "createdAt": "2024-01-01T00:00:00.000Z",
+    "updatedAt": "2024-01-01T12:00:00.000Z"
+  }
+}
+```
+
+<ApiTester
+  endpoint="/api/comments/{id}/moderate"
+  method="PATCH"
+  title="Test PATCH /api/comments/[id]/moderate"
+  description="Moderate a comment (requires moderator or admin role)"
+  showAuthSection={true}
+  pathParams={[
+    {
+      name: "id",
+      type: "string",
+      required: true,
+      description: "Comment ID",
+      default: "comment_1",
+    },
+  ]}
+  defaultBody={{
+    status: "approved",
+  }}
+  bodySchema={[
+    {
+      name: "status",
+      type: "select",
+      options: ["approved", "rejected"],
+      required: true,
+      description: "Moderation status",
+    },
+    {
+      name: "reason",
+      type: "string",
+      description: "Reason for rejection (optional)",
+    },
+  ]}
+/>
+
+## Data Models
+
+### Comment Object
+
+```typescript
+interface Comment {
+  id: string;
+  characterId: string;
+  userId: string;
+  content: string;
+  rating?: number; // 1-5
+  status: "pending" | "approved" | "rejected";
+  createdAt: string; // ISO 8601
+  updatedAt: string; // ISO 8601
+}
+```
+
+### Create Comment Request
+
+```typescript
+interface CreateComment {
+  characterId: string;
+  content: string; // max 1000 characters
+  rating?: number; // 1-5
+}
+```
+
+### Update Comment Request
+
+```typescript
+interface UpdateComment {
+  content: string; // max 1000 characters
+  rating?: number; // 1-5
+}
+```
+
+### Moderate Comment Request
+
+```typescript
+interface ModerateComment {
+  status: "approved" | "rejected";
+  reason?: string; // reason for rejection
+}
+```
+
+## Comment Status Flow
+
+1. **Pending**: New comments start in pending status
+2. **Approved**: Moderators can approve comments to make them visible
+3. **Rejected**: Moderators can reject comments with a reason
+
+## Error Codes
+
+| Code               | Status | Description                            |
+| ------------------ | ------ | -------------------------------------- |
+| `UNAUTHORIZED`     | 401    | Missing or invalid API key             |
+| `FORBIDDEN`        | 403    | Insufficient permissions for operation |
+| `NOT_FOUND`        | 404    | Comment not found                      |
+| `VALIDATION_ERROR` | 400    | Invalid request data                   |
+| `CONFLICT`         | 409    | Comment already exists                 |
+| `INTERNAL_ERROR`   | 500    | Server error                           |
+
+## Rate Limits
+
+- **User**: 100 requests per hour
+- **Moderator**: 500 requests per hour
+- **Admin**: 1000 requests per hour
+
+## Examples
+
+### JavaScript/Node.js
+
+```javascript
+// Get all comments
+const response = await fetch("/api/comments", {
+  headers: {
+    "x-api-key": "your-api-key",
+  },
+});
+const comments = await response.json();
+
+// Create a comment
+const newComment = await fetch("/api/comments", {
+  method: "POST",
+  headers: {
+    "x-api-key": "your-api-key",
+    "Content-Type": "application/json",
+  },
+  body: JSON.stringify({
+    characterId: "char_1",
+    content: "This character is absolutely incredible!",
+    rating: 5,
+  }),
+});
+
+// Moderate a comment
+const moderateComment = await fetch("/api/comments/comment_1/moderate", {
+  method: "PATCH",
+  headers: {
+    "x-api-key": "your-api-key",
+    "Content-Type": "application/json",
+  },
+  body: JSON.stringify({
+    status: "approved",
+  }),
+});
+```
+
+### Python
+
+```python
+import requests
+
+# Get all comments
+response = requests.get(
+    'https://api.nikode.com/api/comments',
+    headers={'x-api-key': 'your-api-key'}
+)
+comments = response.json()
+
+# Create a comment
+new_comment = requests.post(
+    'https://api.nikode.com/api/comments',
+    headers={
+        'x-api-key': 'your-api-key',
+        'Content-Type': 'application/json'
+    },
+    json={
+        'characterId': 'char_1',
+        'content': 'This character is absolutely incredible!',
+        'rating': 5
+    }
+)
+
+# Moderate a comment
+moderate_comment = requests.patch(
+    'https://api.nikode.com/api/comments/comment_1/moderate',
+    headers={
+        'x-api-key': 'your-api-key',
+        'Content-Type': 'application/json'
+    },
+    json={
+        'status': 'approved'
+    }
+)
+```
+
+### cURL
+
+```bash
+# Get all comments
+curl -H "x-api-key: your-api-key" \
+  "https://api.nikode.com/api/comments"
+
+# Get comments with filtering
+curl -H "x-api-key: your-api-key" \
+  "https://api.nikode.com/api/comments?characterId=char_1&status=approved&sortBy=createdAt&sortOrder=desc"
+
+# Create a comment
+curl -X POST -H "x-api-key: your-api-key" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "characterId": "char_1",
+    "content": "This character is absolutely incredible!",
+    "rating": 5
+  }' \
+  "https://api.nikode.com/api/comments"
+
+# Moderate a comment
+curl -X PATCH -H "x-api-key: your-api-key" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "status": "approved"
+  }' \
+  "https://api.nikode.com/api/comments/comment_1/moderate"
+```
