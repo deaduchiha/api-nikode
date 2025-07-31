@@ -16,7 +16,6 @@ import {
   Zap,
   Users,
   MessageSquare,
-  ExternalLink,
   Play,
 } from "lucide-react";
 
@@ -31,12 +30,12 @@ export default function HomePage() {
             Modern Fake API
           </Badge>
           <h1 className="text-4xl md:text-6xl font-bold mb-6 bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
-            Anime & Gaming Characters API
+            Nikode: The Ultimate Anime & Game Character API
           </h1>
           <p className="text-xl text-muted-foreground mb-8 max-w-2xl mx-auto">
-            A comprehensive fake API featuring popular anime and gaming
-            characters. Perfect for testing, learning, and building amazing
-            applications.
+            Instantly access detailed, structured data on your favorite anime
+            and video game characters. Ideal for rapid prototyping, educational
+            projects, and building next-gen applications.
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
             <Link href="/docs">

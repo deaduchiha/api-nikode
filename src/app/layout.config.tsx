@@ -1,4 +1,4 @@
-import type { BaseLayoutProps } from 'fumadocs-ui/layouts/shared';
+import type { BaseLayoutProps } from "fumadocs-ui/layouts/shared";
 
 /**
  * Shared layout configurations
@@ -17,9 +17,14 @@ export const baseOptions: BaseLayoutProps = {
           xmlns="http://www.w3.org/2000/svg"
           aria-label="Logo"
         >
-          <circle cx={12} cy={12} r={12} fill="currentColor" />
+          <path
+            d="M12 2a10 10 0 1 1 0 20a10 10 0 1 1 0-20z"
+            fill="none"
+            stroke="currentColor"
+            strokeWidth="2"
+          />
         </svg>
-        My App
+        Nikode
       </>
     ),
   },
