@@ -19,7 +19,15 @@ const UserQuerySchema = z.object({
   limit: z.coerce.number().min(1).max(100).default(10),
   q: z.string().optional(),
   role: z.enum(["user", "moderator", "admin"]).optional(),
-  active: z.coerce.boolean().optional(),
+  active: z
+    .union([
+      z.literal("true"),
+      z.literal("false"),
+      z.literal("1"),
+      z.literal("0"),
+    ])
+    .transform((val) => val === "true" || val === "1")
+    .optional(),
   sortBy: z
     .enum(["username", "email", "role", "createdAt"])
     .default("username"),
