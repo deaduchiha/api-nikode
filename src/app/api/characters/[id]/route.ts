@@ -4,8 +4,6 @@ import { characters } from "@/lib/data/characters";
 import {
   createApiResponse,
   createErrorResponse,
-  requireAuth,
-  requireRole,
   formatDate,
 } from "@/lib/utils";
 import { UpdateCharacterSchema } from "@/types";
@@ -16,25 +14,6 @@ export async function GET(request: NextRequest): Promise<NextResponse> {
   const id = params.get("id") || "";
 
   try {
-    // Get API key from headers
-    const apiKey =
-      request.headers.get("x-api-key") ||
-      request.headers.get("authorization")?.replace("Bearer ", "") ||
-      null;
-
-    // Validate authentication
-    const auth = requireAuth(apiKey);
-    if (!auth.isValid) {
-      return NextResponse.json(
-        createErrorResponse(
-          "UNAUTHORIZED",
-          auth.message || "Authentication required",
-          401
-        ),
-        { status: 401 }
-      );
-    }
-
     // Find character by ID
     const character = getCharacterById(id);
 
@@ -62,39 +41,6 @@ export async function PUT(request: NextRequest): Promise<NextResponse> {
   const id = params.get("id") || "";
 
   try {
-    // Get API key from headers
-    const apiKey =
-      request.headers.get("x-api-key") ||
-      request.headers.get("authorization")?.replace("Bearer ", "") ||
-      null;
-
-    // Validate authentication
-    const auth = requireAuth(apiKey);
-    if (!auth.isValid) {
-      return NextResponse.json(
-        createErrorResponse(
-          "UNAUTHORIZED",
-          auth.message || "Authentication required",
-          401
-        ),
-        { status: 401 }
-      );
-    }
-
-    // Check if user has permission to update characters (moderator or admin)
-    if (
-      !requireRole("moderator", auth.role as "user" | "moderator" | "admin")
-    ) {
-      return NextResponse.json(
-        createErrorResponse(
-          "FORBIDDEN",
-          "Insufficient permissions to update characters",
-          403
-        ),
-        { status: 403 }
-      );
-    }
-
     // Find character by ID
     const characterIndex = characters.findIndex((char) => char.id === id);
 
@@ -169,37 +115,6 @@ export async function DELETE(request: NextRequest): Promise<NextResponse> {
   const id = params.get("id") || "";
 
   try {
-    // Get API key from headers
-    const apiKey =
-      request.headers.get("x-api-key") ||
-      request.headers.get("authorization")?.replace("Bearer ", "") ||
-      null;
-
-    // Validate authentication
-    const auth = requireAuth(apiKey);
-    if (!auth.isValid) {
-      return NextResponse.json(
-        createErrorResponse(
-          "UNAUTHORIZED",
-          auth.message || "Authentication required",
-          401
-        ),
-        { status: 401 }
-      );
-    }
-
-    // Check if user has permission to delete characters (admin only)
-    if (!requireRole("admin", auth.role as "user" | "moderator" | "admin")) {
-      return NextResponse.json(
-        createErrorResponse(
-          "FORBIDDEN",
-          "Insufficient permissions to delete characters",
-          403
-        ),
-        { status: 403 }
-      );
-    }
-
     // Find character by ID
     const characterIndex = characters.findIndex((char) => char.id === id);
 

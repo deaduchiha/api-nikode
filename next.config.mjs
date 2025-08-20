@@ -22,7 +22,7 @@ const config = {
           {
             key: "Access-Control-Allow-Headers",
             value:
-              "Content-Type, Authorization, x-api-key, X-Requested-With, Accept, Origin",
+              "Content-Type, Authorization, X-Requested-With, Accept, Origin",
           },
           {
             key: "Access-Control-Allow-Credentials",

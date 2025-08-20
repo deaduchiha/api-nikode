@@ -14,7 +14,6 @@ const defaultConfig: CorsConfig = {
   allowedHeaders: [
     "Content-Type",
     "Authorization",
-    "x-api-key",
     "X-Requested-With",
     "Accept",
     "Origin",
@@ -92,7 +91,7 @@ export function addCorsHeaders(
   response.headers.set(
     "Access-Control-Allow-Headers",
     corsConfig.allowedHeaders?.join(", ") ||
-      "Content-Type, Authorization, x-api-key, X-Requested-With, Accept, Origin"
+      "Content-Type, Authorization, X-Requested-With, Accept, Origin"
   );
   response.headers.set("Access-Control-Allow-Credentials", "true");
 

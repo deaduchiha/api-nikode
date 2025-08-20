@@ -2,11 +2,7 @@ import { NextResponse } from "next/server";
 import { characters } from "@/lib/data/characters";
 import { users } from "@/lib/data/users";
 import { comments } from "@/lib/data/comments";
-import {
-  optionalAuth,
-  createErrorResponse,
-  createApiResponse,
-} from "@/lib/utils";
+import { createErrorResponse, createApiResponse } from "@/lib/utils";
 import { z } from "zod";
 
 // Search query schema
@@ -28,25 +24,6 @@ interface SearchResult {
 
 export async function GET(request: Request): Promise<NextResponse> {
   try {
-    // Get API key from headers
-    const apiKey =
-      request.headers.get("x-api-key") ||
-      request.headers.get("authorization")?.replace("Bearer ", "") ||
-      null;
-
-    // Use optional authentication for public search access
-    const auth = optionalAuth(apiKey);
-    if (!auth.isValid) {
-      return NextResponse.json(
-        createErrorResponse(
-          "UNAUTHORIZED",
-          auth.message || "Invalid API key",
-          401
-        ),
-        { status: 401 }
-      );
-    }
-
     // Parse and validate query parameters
     const { searchParams } = new URL(request.url);
     const queryParams = Object.fromEntries(searchParams.entries());
@@ -85,11 +62,7 @@ export async function GET(request: Request): Promise<NextResponse> {
     }
 
     // Search users (only if user has permission)
-    if (
-      (query.type === "all" || query.type === "users") &&
-      auth.role !== "guest" &&
-      auth.role !== "user"
-    ) {
+    if (query.type === "all" || query.type === "users") {
       const userResults = users
         .filter(
           (user) =>

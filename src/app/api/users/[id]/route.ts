@@ -3,8 +3,6 @@ import { users, getUserById } from "@/lib/data/users";
 import {
   createApiResponse,
   createErrorResponse,
-  requireAuth,
-  requireRole,
   formatDate,
 } from "@/lib/utils";
 import { UpdateUserSchema } from "@/types";
@@ -15,25 +13,6 @@ export async function GET(request: NextRequest): Promise<NextResponse> {
   const id = params.get("id") || "";
 
   try {
-    // Get API key from headers
-    const apiKey =
-      request.headers.get("x-api-key") ||
-      request.headers.get("authorization")?.replace("Bearer ", "") ||
-      null;
-
-    // Validate authentication
-    const auth = requireAuth(apiKey);
-    if (!auth.isValid) {
-      return NextResponse.json(
-        createErrorResponse(
-          "UNAUTHORIZED",
-          auth.message || "Authentication required",
-          401
-        ),
-        { status: 401 }
-      );
-    }
-
     // Find user by ID
     const user = getUserById(id);
 
@@ -61,41 +40,6 @@ export async function PUT(request: NextRequest): Promise<NextResponse> {
   const id = params.get("id") || "";
 
   try {
-    // Get API key from headers
-    const apiKey =
-      request.headers.get("x-api-key") ||
-      request.headers.get("authorization")?.replace("Bearer ", "") ||
-      null;
-
-    // Validate authentication
-    const auth = requireAuth(apiKey);
-    if (!auth.isValid) {
-      return NextResponse.json(
-        createErrorResponse(
-          "UNAUTHORIZED",
-          auth.message || "Authentication required",
-          401
-        ),
-        { status: 401 }
-      );
-    }
-
-    // Check if user has permission to update users (admin only, or user updating their own profile)
-    // Allow users to update their own profile, or admins to update any profile
-    if (auth.role !== "admin") {
-      // In a real app, you'd get the user ID from the JWT token
-      // For this demo, we'll just check if the user is trying to update their own profile
-      // This is a simplified check - in production, you'd validate against the JWT payload
-      return NextResponse.json(
-        createErrorResponse(
-          "FORBIDDEN",
-          "Insufficient permissions to update users",
-          403
-        ),
-        { status: 403 }
-      );
-    }
-
     // Find user by ID
     const userIndex = users.findIndex((user) => user.id === id);
 
@@ -186,37 +130,6 @@ export async function DELETE(request: NextRequest): Promise<NextResponse> {
   const id = params.get("id") || "";
 
   try {
-    // Get API key from headers
-    const apiKey =
-      request.headers.get("x-api-key") ||
-      request.headers.get("authorization")?.replace("Bearer ", "") ||
-      null;
-
-    // Validate authentication
-    const auth = requireAuth(apiKey);
-    if (!auth.isValid) {
-      return NextResponse.json(
-        createErrorResponse(
-          "UNAUTHORIZED",
-          auth.message || "Authentication required",
-          401
-        ),
-        { status: 401 }
-      );
-    }
-
-    // Check if user has permission to delete users (admin only)
-    if (!requireRole("admin", auth.role as "user" | "moderator" | "admin")) {
-      return NextResponse.json(
-        createErrorResponse(
-          "FORBIDDEN",
-          "Insufficient permissions to delete users",
-          403
-        ),
-        { status: 403 }
-      );
-    }
-
     // Find user by ID
     const userIndex = users.findIndex((user) => user.id === id);
 

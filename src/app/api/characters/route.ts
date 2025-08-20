@@ -6,8 +6,6 @@ import {
   createErrorResponse,
   paginateArray,
   filterCharactersByQuery,
-  optionalAuth,
-  requireRole,
   generateId,
   formatDate,
 } from "@/lib/utils";
@@ -17,25 +15,6 @@ import type { CreateCharacter } from "@/types";
 
 export async function GET(request: Request): Promise<NextResponse> {
   try {
-    // Get API key from headers
-    const apiKey =
-      request.headers.get("x-api-key") ||
-      request.headers.get("authorization")?.replace("Bearer ", "") ||
-      null;
-
-    // Use optional authentication for public read access
-    const auth = optionalAuth(apiKey);
-    if (!auth.isValid) {
-      return NextResponse.json(
-        createErrorResponse(
-          "UNAUTHORIZED",
-          auth.message || "Invalid API key",
-          401
-        ),
-        { status: 401 }
-      );
-    }
-
     // Parse and validate query parameters
     const { searchParams } = new URL(request.url);
     const queryParams = Object.fromEntries(searchParams.entries());
@@ -83,40 +62,6 @@ export async function GET(request: Request): Promise<NextResponse> {
 
 export async function POST(request: Request): Promise<NextResponse> {
   try {
-    // Get API key from headers
-    const apiKey =
-      request.headers.get("x-api-key") ||
-      request.headers.get("authorization")?.replace("Bearer ", "") ||
-      null;
-
-    // Require authentication for write operations
-    const auth = optionalAuth(apiKey);
-    if (!auth.isValid) {
-      return NextResponse.json(
-        createErrorResponse(
-          "UNAUTHORIZED",
-          auth.message || "Authentication required for write operations",
-          401
-        ),
-        { status: 401 }
-      );
-    }
-
-    // Check if user has permission to create characters (moderator or admin)
-    if (
-      auth.role === "guest" ||
-      !requireRole("moderator", auth.role as "user" | "moderator" | "admin")
-    ) {
-      return NextResponse.json(
-        createErrorResponse(
-          "FORBIDDEN",
-          "Insufficient permissions to create characters",
-          403
-        ),
-        { status: 403 }
-      );
-    }
-
     // Parse request body
     const body = await request.json();
 

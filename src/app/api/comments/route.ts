@@ -8,7 +8,6 @@ import {
   createApiResponse,
   createErrorResponse,
   paginateArray,
-  optionalAuth,
   generateId,
   formatDate,
 } from "@/lib/utils";
@@ -29,24 +28,6 @@ const CommentQuerySchema = z.object({
 
 export async function GET(request: NextRequest) {
   try {
-    // Get API key from headers
-    const apiKey =
-      request.headers.get("x-api-key") ||
-      request.headers.get("authorization")?.replace("Bearer ", "");
-
-    // Use optional authentication for public read access
-    const auth = optionalAuth(apiKey || null);
-    if (!auth.isValid) {
-      return NextResponse.json(
-        createErrorResponse(
-          "UNAUTHORIZED",
-          auth.message || "Invalid API key",
-          401
-        ),
-        { status: 401 }
-      );
-    }
-
     // Parse and validate query parameters
     const { searchParams } = new URL(request.url);
     const queryParams = Object.fromEntries(searchParams.entries());
@@ -136,24 +117,6 @@ export async function GET(request: NextRequest) {
 
 export async function POST(request: NextRequest) {
   try {
-    // Get API key from headers
-    const apiKey =
-      request.headers.get("x-api-key") ||
-      request.headers.get("authorization")?.replace("Bearer ", "");
-
-    // Validate authentication
-    const auth = optionalAuth(apiKey || null);
-    if (!auth.isValid) {
-      return NextResponse.json(
-        createErrorResponse(
-          "UNAUTHORIZED",
-          auth.message || "Authentication required",
-          401
-        ),
-        { status: 401 }
-      );
-    }
-
     // Parse request body
     const body = await request.json();
 

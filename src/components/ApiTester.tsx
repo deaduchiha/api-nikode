@@ -348,40 +348,6 @@ export function ApiTester({
           </TabsList>
 
           <TabsContent value="request" className="space-y-4">
-            {/* Authentication Section */}
-            {showAuthSection && (
-              <div className="space-y-2">
-                <Label>API Key</Label>
-                <Select
-                  value={selectedApiKey}
-                  onValueChange={setSelectedApiKey}
-                >
-                  <SelectTrigger>
-                    <SelectValue />
-                  </SelectTrigger>
-                  <SelectContent>
-                    {availableApiKeys.map((apiKey) => (
-                      <SelectItem key={apiKey.key} value={apiKey.key}>
-                        <div className="flex flex-col">
-                          <span className="font-medium">{apiKey.key}</span>
-                          <span className="text-xs text-gray-500">
-                            {apiKey.description}
-                          </span>
-                        </div>
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-                <div className="text-xs text-gray-500">
-                  Selected:{" "}
-                  <span className="font-medium">{selectedApiKey}</span>(
-                  {availableApiKeys.find((k) => k.key === selectedApiKey)
-                    ?.role || "unknown"}{" "}
-                  role)
-                </div>
-              </div>
-            )}
-
             {/* Path Parameters */}
             {pathParams.length > 0 && (
               <div className="space-y-2">
