@@ -18,7 +18,7 @@ The Search API allows you to:
 
 Perform a global search across all entities.
 
-**Permissions**: All authenticated users
+**Permissions**: Public access
 
 **Query Parameters**:
 
@@ -32,8 +32,7 @@ Perform a global search across all entities.
 **Example Request**:
 
 ```bash
-curl -H "x-api-key: your-api-key" \
-  "https://api.nikode.com/api/search?q=naruto&type=characters&page=1&limit=10"
+curl "https://api.nikode.com/api/search?q=naruto&type=characters&page=1&limit=10"
 ```
 
 **Example Response**:
@@ -230,61 +229,52 @@ interface SearchResponse {
 
 ```bash
 # Search for characters by name
-curl -H "x-api-key: your-api-key" \
-  "https://api.nikode.com/api/search?q=goku&type=characters"
+curl "https://api.nikode.com/api/search?q=goku&type=characters"
 
 # Search for characters by anime
-curl -H "x-api-key: your-api-key" \
-  "https://api.nikode.com/api/search?q=dragon&type=characters"
+curl "https://api.nikode.com/api/search?q=dragon&type=characters"
 
 # Search for powerful characters
-curl -H "x-api-key: your-api-key" \
-  "https://api.nikode.com/api/search?q=power&type=characters&sortBy=power&sortOrder=desc"
+curl "https://api.nikode.com/api/search?q=power&type=characters&sortBy=power&sortOrder=desc"
 ```
 
 ### User Search
 
 ```bash
 # Search for users by username
-curl -H "x-api-key: your-api-key" \
-  "https://api.nikode.com/api/search?q=admin&type=users"
+curl "https://api.nikode.com/api/search?q=admin&type=users"
 
 # Search for users by role
-curl -H "x-api-key: your-api-key" \
-  "https://api.nikode.com/api/search?q=moderator&type=users"
+curl "https://api.nikode.com/api/search?q=moderator&type=users"
 ```
 
 ### Comment Search
 
 ```bash
 # Search for comments by content
-curl -H "x-api-key: your-api-key" \
-  "https://api.nikode.com/api/search?q=amazing&type=comments"
+curl "https://api.nikode.com/api/search?q=amazing&type=comments"
 
 # Search for approved comments
-curl -H "x-api-key: your-api-key" \
-  "https://api.nikode.com/api/search?q=great&type=comments&status=approved"
+curl "https://api.nikode.com/api/search?q=great&type=comments&status=approved"
 ```
 
 ### Global Search
 
 ```bash
 # Search across all entities
-curl -H "x-api-key: your-api-key" \
-  "https://api.nikode.com/api/search?q=naruto&type=all"
+curl "https://api.nikode.com/api/search?q=naruto&type=all"
 
 # Search with pagination
-curl -H "x-api-key: your-api-key" \
-  "https://api.nikode.com/api/search?q=anime&page=2&limit=20"
+curl "https://api.nikode.com/api/search?q=anime&page=2&limit=20"
 ```
 
 ## Error Codes
 
-| Code               | Status | Description                |
-| ------------------ | ------ | -------------------------- |
-| `UNAUTHORIZED`     | 401    | Missing or invalid API key |
-| `VALIDATION_ERROR` | 400    | Invalid search parameters  |
-| `INTERNAL_ERROR`   | 500    | Server error               |
+| Code               | Status | Description               |
+| ------------------ | ------ | ------------------------- |
+| `NOT_FOUND`        | 404    | Search query not found    |
+| `VALIDATION_ERROR` | 400    | Invalid search parameters |
+| `INTERNAL_ERROR`   | 500    | Server error              |
 
 ## Rate Limits
 
@@ -298,21 +288,12 @@ curl -H "x-api-key: your-api-key" \
 
 ```javascript
 // Search for characters
-const response = await fetch("/api/search?q=goku&type=characters", {
-  headers: {
-    "x-api-key": "your-api-key",
-  },
-});
+const response = await fetch("/api/search?q=goku&type=characters");
 const searchResults = await response.json();
 
 // Global search
 const globalSearch = await fetch(
-  "/api/search?q=anime&type=all&page=1&limit=10",
-  {
-    headers: {
-      "x-api-key": "your-api-key",
-    },
-  }
+  "/api/search?q=anime&type=all&page=1&limit=10"
 );
 const results = await globalSearch.json();
 ```
@@ -325,16 +306,14 @@ import requests
 # Search for characters
 response = requests.get(
     'https://api.nikode.com/api/search',
-    params={'q': 'goku', 'type': 'characters'},
-    headers={'x-api-key': 'your-api-key'}
+    params={'q': 'goku', 'type': 'characters'}
 )
 search_results = response.json()
 
 # Global search
 global_search = requests.get(
     'https://api.nikode.com/api/search',
-    params={'q': 'anime', 'type': 'all', 'page': 1, 'limit': 10},
-    headers={'x-api-key': 'your-api-key'}
+    params={'q': 'anime', 'type': 'all', 'page': 1, 'limit': 10}
 )
 results = global_search.json()
 ```
@@ -343,20 +322,16 @@ results = global_search.json()
 
 ```bash
 # Search for characters
-curl -H "x-api-key: your-api-key" \
-  "https://api.nikode.com/api/search?q=goku&type=characters"
+curl "https://api.nikode.com/api/search?q=goku&type=characters"
 
 # Search for users
-curl -H "x-api-key: your-api-key" \
-  "https://api.nikode.com/api/search?q=admin&type=users"
+curl "https://api.nikode.com/api/search?q=admin&type=users"
 
 # Search for comments
-curl -H "x-api-key: your-api-key" \
-  "https://api.nikode.com/api/search?q=amazing&type=comments"
+curl "https://api.nikode.com/api/search?q=amazing&type=comments"
 
 # Global search with pagination
-curl -H "x-api-key: your-api-key" \
-  "https://api.nikode.com/api/search?q=anime&type=all&page=1&limit=10&sortBy=relevance&sortOrder=desc"
+curl "https://api.nikode.com/api/search?q=anime&type=all&page=1&limit=10&sortBy=relevance&sortOrder=desc"
 ```
 
 ## Search Tips
