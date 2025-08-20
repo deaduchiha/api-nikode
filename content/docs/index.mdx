@@ -12,16 +12,13 @@ The Nikode API provides endpoints for:
 - **Comments**: Comment system for characters
 - **Search**: Global search across all entities
 
-## 🔐 Authentication
+## 🔐 Access
 
-All API endpoints require authentication using API keys. Include your API key in the request headers:
+All API endpoints are publicly accessible:
 
 ```bash
-# Using x-api-key header
-curl -H "x-api-key: your-api-key" https://api.example.com/characters
-
-# Using Authorization header
-curl -H "Authorization: Bearer your-api-key" https://api.example.com/characters
+# Example request
+curl https://api.example.com/characters
 ```
 
 ## 👥 User Roles
@@ -67,10 +64,9 @@ curl -H "Authorization: Bearer your-api-key" https://api.example.com/characters
 
 ## 🛠️ Getting Started
 
-1. **Get an API Key**: Contact the administrator to receive your API key
-2. **Choose your endpoint**: Browse the documentation for the endpoint you need
-3. **Test with our playground**: Use the interactive testing tools to try endpoints
-4. **Integrate**: Use the provided examples to integrate with your application
+1. **Choose your endpoint**: Browse the documentation for the endpoint you need
+2. **Test with our playground**: Use the interactive testing tools to try endpoints
+3. **Integrate**: Use the provided examples to integrate with your application
 
 ## 📊 Response Format
 
@@ -109,7 +105,6 @@ Errors follow a consistent format:
 
 Common error codes:
 
-- `UNAUTHORIZED` (401): Missing or invalid API key
 - `FORBIDDEN` (403): Insufficient permissions
 - `NOT_FOUND` (404): Resource not found
 - `VALIDATION_ERROR` (400): Invalid request data

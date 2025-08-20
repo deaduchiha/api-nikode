@@ -35,8 +35,7 @@ Retrieve a list of characters with optional filtering, sorting, and pagination.
 **Example Request**:
 
 ```bash
-curl -H "x-api-key: your-api-key" \
-  "https://api.nikode.com/api/characters?page=1&limit=10&anime=Naruto&minPower=50"
+curl "https://api.nikode.com/api/characters?page=1&limit=10&anime=Naruto&minPower=50"
 ```
 
 **Example Response**:
@@ -153,7 +152,7 @@ Create a new character.
 **Example Request**:
 
 ```bash
-curl -X POST -H "x-api-key: your-api-key" \
+curl -X POST \
   -H "Content-Type: application/json" \
   -d '{
     "name": "Goku",
@@ -303,8 +302,7 @@ Retrieve a specific character by ID.
 **Example Request**:
 
 ```bash
-curl -H "x-api-key: your-api-key" \
-  "https://api.nikode.com/api/characters/char_1"
+curl "https://api.nikode.com/api/characters/char_1"
 ```
 
 **Example Response**:
@@ -384,7 +382,7 @@ Update a character's information.
 **Example Request**:
 
 ```bash
-curl -X PUT -H "x-api-key: your-api-key" \
+curl -X PUT \
   -H "Content-Type: application/json" \
   -d '{
     "power": 97,
@@ -506,8 +504,7 @@ Delete a character.
 **Example Request**:
 
 ```bash
-curl -X DELETE -H "x-api-key: your-api-key" \
-  "https://api.nikode.com/api/characters/char_1"
+curl -X DELETE "https://api.nikode.com/api/characters/char_1"
 ```
 
 **Example Response**:
@@ -642,18 +639,13 @@ interface UpdateCharacter {
 
 ```javascript
 // Get all characters
-const response = await fetch("/api/characters", {
-  headers: {
-    "x-api-key": "your-api-key",
-  },
-});
+const response = await fetch("/api/characters");
 const characters = await response.json();
 
 // Create a character
 const newCharacter = await fetch("/api/characters", {
   method: "POST",
   headers: {
-    "x-api-key": "your-api-key",
     "Content-Type": "application/json",
   },
   body: JSON.stringify({
@@ -677,17 +669,13 @@ const newCharacter = await fetch("/api/characters", {
 import requests
 
 # Get all characters
-response = requests.get(
-    'https://api.nikode.com/api/characters',
-    headers={'x-api-key': 'your-api-key'}
-)
+response = requests.get('https://api.nikode.com/api/characters')
 characters = response.json()
 
 # Create a character
 new_character = requests.post(
     'https://api.nikode.com/api/characters',
     headers={
-        'x-api-key': 'your-api-key',
         'Content-Type': 'application/json'
     },
     json={
@@ -709,15 +697,13 @@ new_character = requests.post(
 
 ```bash
 # Get all characters
-curl -H "x-api-key: your-api-key" \
-  "https://api.nikode.com/api/characters"
+curl "https://api.nikode.com/api/characters"
 
 # Get characters with filtering
-curl -H "x-api-key: your-api-key" \
-  "https://api.nikode.com/api/characters?anime=Naruto&minPower=80&sortBy=power&sortOrder=desc"
+curl "https://api.nikode.com/api/characters?anime=Naruto&minPower=80&sortBy=power&sortOrder=desc"
 
 # Create a character
-curl -X POST -H "x-api-key: your-api-key" \
+curl -X POST \
   -H "Content-Type: application/json" \
   -d '{
     "name": "Goku",
