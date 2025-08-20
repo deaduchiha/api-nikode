@@ -1,7 +1,6 @@
 import Link from "next/link";
 import {
   Card,
-  CardContent,
   CardDescription,
   CardHeader,
   CardTitle,
@@ -12,7 +11,6 @@ import {
   BookOpen,
   Code,
   Database,
-  Shield,
   Zap,
   Users,
   MessageSquare,
@@ -29,20 +27,17 @@ export default function HomePage() {
             <Zap className="w-3 h-3 mr-1" />
             Modern Fake API
           </Badge>
-          <h1 className="text-4xl md:text-6xl font-bold mb-6 bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
-            Nikode: The Ultimate Anime & Game Character API
+          <h1 className="text-4xl md:text-6xl font-bold mb-6">
+            Nikode API: Anime Character Data
           </h1>
           <p className="text-xl text-muted-foreground mb-8 max-w-2xl mx-auto">
             Instantly access detailed, structured data on your favorite anime
-            and video game characters. Ideal for rapid prototyping, educational
-            projects, and building next-gen applications.
+            characters. Ideal for rapid prototyping, educational projects, and
+            building next-gen applications.
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
             <Link href="/docs">
-              <Button
-                size="lg"
-                className="bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700"
-              >
+              <Button size="lg">
                 <BookOpen className="w-5 h-5 mr-2" />
                 Get Started
               </Button>
@@ -71,19 +66,6 @@ export default function HomePage() {
               <CardDescription>
                 15+ popular anime characters with detailed information including
                 powers, abilities, and personality traits.
-              </CardDescription>
-            </CardHeader>
-          </Card>
-
-          <Card>
-            <CardHeader>
-              <div className="w-12 h-12 bg-green-100 dark:bg-green-900 rounded-lg flex items-center justify-center mb-4">
-                <Shield className="w-6 h-6 text-green-600" />
-              </div>
-              <CardTitle>API Key Authentication</CardTitle>
-              <CardDescription>
-                Secure API key-based authentication with role-based access
-                control for different permission levels.
               </CardDescription>
             </CardHeader>
           </Card>
@@ -138,51 +120,6 @@ export default function HomePage() {
                 and test coverage.
               </CardDescription>
             </CardHeader>
-          </Card>
-        </div>
-      </section>
-
-      {/* Quick Start Section */}
-      <section className="container mx-auto px-4 py-16">
-        <div className="max-w-4xl mx-auto">
-          <div className="text-center mb-12">
-            <h2 className="text-3xl font-bold mb-4">Quick Start</h2>
-            <p className="text-muted-foreground">
-              Get started with Nikode API in minutes. Here&apos;s a simple
-              example:
-            </p>
-          </div>
-
-          <Card>
-            <CardHeader>
-              <CardTitle>Get All Characters</CardTitle>
-              <CardDescription>
-                Retrieve a list of all anime characters with pagination and
-                filtering.
-              </CardDescription>
-            </CardHeader>
-            <CardContent>
-              <div className="bg-muted rounded-lg p-4 font-mono text-sm">
-                <div className="flex items-center justify-between mb-2">
-                  <span className="text-green-600">GET</span>
-                  <span className="text-muted-foreground">/api/characters</span>
-                </div>
-                <div className="space-y-2">
-                  <div>
-                    <span className="text-blue-600">Headers:</span>
-                    <div className="ml-4 text-xs">
-                      X-API-Key: demo-api-key-123
-                    </div>
-                  </div>
-                  <div>
-                    <span className="text-blue-600">Query Parameters:</span>
-                    <div className="ml-4 text-xs">
-                      page=1&limit=10&sortBy=power&sortOrder=desc
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </CardContent>
           </Card>
         </div>
       </section>

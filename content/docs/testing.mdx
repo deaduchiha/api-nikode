@@ -26,7 +26,7 @@ Select the API endpoint you want to test from the dropdown menu. Available endpo
 
 ### 2. Set Authentication
 
-Choose your API key from the available options:
+Choose your access level from the available options:
 
 - **User Key**: `user_key_123` - Basic read access
 - **Moderator Key**: `moderator_key_456` - Can create/update characters
@@ -374,10 +374,10 @@ Always check that responses match the documented format and include expected fie
 
 ### Common Issues
 
-1. **401 Unauthorized**
+1. **404 Not Found**
 
-   - Check that you're using a valid API key
-   - Ensure the API key is properly formatted in headers
+   - Check that the endpoint URL is correct
+   - Verify the resource ID exists
 
 2. **403 Forbidden**
 
@@ -412,7 +412,6 @@ You can export your test configurations to share with others:
   "endpoint": "/api/characters",
   "method": "POST",
   "headers": {
-    "x-api-key": "moderator_key_456",
     "Content-Type": "application/json"
   },
   "body": {

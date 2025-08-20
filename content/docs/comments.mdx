@@ -9,7 +9,7 @@ The Comments API allows you to:
 
 - Retrieve comments with pagination and filtering
 - Get individual comment details
-- Create new comments (All authenticated users)
+- Create new comments (Public access)
 - Update comment content (Comment author or Moderator+)
 - Delete comments (Comment author, Moderator, or Admin)
 - Moderate comments (Moderator+)
@@ -20,7 +20,7 @@ The Comments API allows you to:
 
 Retrieve a list of comments with optional filtering, sorting, and pagination.
 
-**Permissions**: All authenticated users
+**Permissions**: Public access
 
 **Query Parameters**:
 
@@ -35,8 +35,7 @@ Retrieve a list of comments with optional filtering, sorting, and pagination.
 **Example Request**:
 
 ```bash
-curl -H "x-api-key: your-api-key" \
-  "https://api.nikode.com/api/comments?page=1&limit=10&characterId=char_1&status=approved"
+curl "https://api.nikode.com/api/comments?page=1&limit=10&characterId=char_1&status=approved"
 ```
 
 **Example Response**:
@@ -121,7 +120,7 @@ curl -H "x-api-key: your-api-key" \
 
 Create a new comment.
 
-**Permissions**: All authenticated users
+**Permissions**: Public access
 
 **Request Body**:
 
@@ -136,7 +135,7 @@ Create a new comment.
 **Example Request**:
 
 ```bash
-curl -X POST -H "x-api-key: your-api-key" \
+curl -X POST \
   -H "Content-Type: application/json" \
   -d '{
     "characterId": "char_1",
@@ -204,7 +203,7 @@ curl -X POST -H "x-api-key: your-api-key" \
 
 Retrieve a specific comment by ID.
 
-**Permissions**: All authenticated users
+**Permissions**: Public access
 
 **Path Parameters**:
 
@@ -213,8 +212,7 @@ Retrieve a specific comment by ID.
 **Example Request**:
 
 ```bash
-curl -H "x-api-key: your-api-key" \
-  "https://api.nikode.com/api/comments/comment_1"
+curl "https://api.nikode.com/api/comments/comment_1"
 ```
 
 **Example Response**:
@@ -275,7 +273,7 @@ Update a comment's content.
 **Example Request**:
 
 ```bash
-curl -X PUT -H "x-api-key: your-api-key" \
+curl -X PUT \
   -H "Content-Type: application/json" \
   -d '{
     "content": "Updated comment content with more details about the character.",
@@ -353,8 +351,7 @@ Delete a comment.
 **Example Request**:
 
 ```bash
-curl -X DELETE -H "x-api-key: your-api-key" \
-  "https://api.nikode.com/api/comments/comment_1"
+curl -X DELETE "https://api.nikode.com/api/comments/comment_1"
 ```
 
 **Example Response**:
@@ -415,7 +412,7 @@ Moderate a comment (approve/reject).
 **Example Request**:
 
 ```bash
-curl -X PATCH -H "x-api-key: your-api-key" \
+curl -X PATCH \
   -H "Content-Type: application/json" \
   -d '{
     "status": "approved"
@@ -531,7 +528,6 @@ interface ModerateComment {
 
 | Code               | Status | Description                            |
 | ------------------ | ------ | -------------------------------------- |
-| `UNAUTHORIZED`     | 401    | Missing or invalid API key             |
 | `FORBIDDEN`        | 403    | Insufficient permissions for operation |
 | `NOT_FOUND`        | 404    | Comment not found                      |
 | `VALIDATION_ERROR` | 400    | Invalid request data                   |
@@ -550,18 +546,13 @@ interface ModerateComment {
 
 ```javascript
 // Get all comments
-const response = await fetch("/api/comments", {
-  headers: {
-    "x-api-key": "your-api-key",
-  },
-});
+const response = await fetch("/api/comments");
 const comments = await response.json();
 
 // Create a comment
 const newComment = await fetch("/api/comments", {
   method: "POST",
   headers: {
-    "x-api-key": "your-api-key",
     "Content-Type": "application/json",
   },
   body: JSON.stringify({
@@ -575,7 +566,6 @@ const newComment = await fetch("/api/comments", {
 const moderateComment = await fetch("/api/comments/comment_1/moderate", {
   method: "PATCH",
   headers: {
-    "x-api-key": "your-api-key",
     "Content-Type": "application/json",
   },
   body: JSON.stringify({
@@ -590,17 +580,13 @@ const moderateComment = await fetch("/api/comments/comment_1/moderate", {
 import requests
 
 # Get all comments
-response = requests.get(
-    'https://api.nikode.com/api/comments',
-    headers={'x-api-key': 'your-api-key'}
-)
+response = requests.get('https://api.nikode.com/api/comments')
 comments = response.json()
 
 # Create a comment
 new_comment = requests.post(
     'https://api.nikode.com/api/comments',
     headers={
-        'x-api-key': 'your-api-key',
         'Content-Type': 'application/json'
     },
     json={
@@ -614,7 +600,6 @@ new_comment = requests.post(
 moderate_comment = requests.patch(
     'https://api.nikode.com/api/comments/comment_1/moderate',
     headers={
-        'x-api-key': 'your-api-key',
         'Content-Type': 'application/json'
     },
     json={
@@ -627,15 +612,13 @@ moderate_comment = requests.patch(
 
 ```bash
 # Get all comments
-curl -H "x-api-key: your-api-key" \
-  "https://api.nikode.com/api/comments"
+curl "https://api.nikode.com/api/comments"
 
 # Get comments with filtering
-curl -H "x-api-key: your-api-key" \
-  "https://api.nikode.com/api/comments?characterId=char_1&status=approved&sortBy=createdAt&sortOrder=desc"
+curl "https://api.nikode.com/api/comments?characterId=char_1&status=approved&sortBy=createdAt&sortOrder=desc"
 
 # Create a comment
-curl -X POST -H "x-api-key: your-api-key" \
+curl -X POST \
   -H "Content-Type: application/json" \
   -d '{
     "characterId": "char_1",
@@ -645,7 +628,7 @@ curl -X POST -H "x-api-key: your-api-key" \
   "https://api.nikode.com/api/comments"
 
 # Moderate a comment
-curl -X PATCH -H "x-api-key: your-api-key" \
+curl -X PATCH \
   -H "Content-Type: application/json" \
   -d '{
     "status": "approved"

@@ -19,7 +19,7 @@ The Characters API allows you to:
 
 Retrieve a list of characters with optional filtering, sorting, and pagination.
 
-**Permissions**: All authenticated users
+**Permissions**: Public access
 
 **Query Parameters**:
 
@@ -293,7 +293,7 @@ curl -X POST \
 
 Retrieve a specific character by ID.
 
-**Permissions**: All authenticated users
+**Permissions**: Public access
 
 **Path Parameters**:
 
@@ -620,7 +620,6 @@ interface UpdateCharacter {
 
 | Code               | Status | Description                             |
 | ------------------ | ------ | --------------------------------------- |
-| `UNAUTHORIZED`     | 401    | Missing or invalid API key              |
 | `FORBIDDEN`        | 403    | Insufficient permissions for operation  |
 | `NOT_FOUND`        | 404    | Character not found                     |
 | `VALIDATION_ERROR` | 400    | Invalid request data                    |

@@ -24,7 +24,7 @@ export const baseOptions: BaseLayoutProps = {
             strokeWidth="2"
           />
         </svg>
-        Nikode
+        Nikode API
       </>
     ),
   },
