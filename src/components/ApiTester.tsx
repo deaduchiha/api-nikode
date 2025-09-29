@@ -179,10 +179,6 @@ export function ApiTester({
         "Content-Type": "application/json",
       };
 
-      if (showAuthSection) {
-        headers["x-api-key"] = selectedApiKey;
-      }
-
       const requestOptions: RequestInit = {
         method,
         headers,
@@ -533,11 +529,6 @@ export function ApiTester({
   function buildCurlCommand(): string {
     const url = buildUrl();
     let curl = `curl -X ${method} "${url}"`;
-
-    // Add headers
-    if (showAuthSection) {
-      curl += ` \\\n  -H "x-api-key: ${selectedApiKey}"`;
-    }
 
     if (method !== "GET" && Object.keys(body).length > 0) {
       curl += ` \\\n  -H "Content-Type: application/json"`;
