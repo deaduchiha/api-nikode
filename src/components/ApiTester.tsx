@@ -91,30 +91,6 @@ export function ApiTester({
   queryParams = [],
   bodySchema = [],
   pathParams = [],
-  showAuthSection = false,
-  defaultApiKey = "demo-api-key-123",
-  availableApiKeys = [
-    {
-      key: "demo-api-key-123",
-      role: "user",
-      description: "User role - read access only",
-    },
-    {
-      key: "test-api-key-456",
-      role: "moderator",
-      description: "Moderator role - can create/update characters",
-    },
-    {
-      key: "admin-api-key-789",
-      role: "admin",
-      description: "Admin role - full access",
-    },
-    {
-      key: "invalid_key",
-      role: "invalid",
-      description: "Invalid key - will return 401",
-    },
-  ],
 }: ApiTesterProps) {
   const [isLoading, setIsLoading] = useState(false);
   const [response, setResponse] = useState<TestResponse | null>(null);
@@ -122,7 +98,6 @@ export function ApiTester({
     useState<Record<string, ParamValue>>(defaultParams);
   const [body, setBody] = useState<Record<string, ParamValue>>(defaultBody);
   const [pathValues, setPathValues] = useState<Record<string, ParamValue>>({});
-  const [selectedApiKey, setSelectedApiKey] = useState(defaultApiKey);
   const [copied, setCopied] = useState(false);
 
   // Create stable initial path values using useMemo
