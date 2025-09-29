@@ -121,9 +121,17 @@ export function ApiTester({
   const buildUrl = () => {
     let url = endpoint;
 
+    // Optional absolute base URL to target remote API from localhost
+    const apiBase = process.env.NEXT_PUBLIC_API_BASE_URL || "";
+
     // Make sure the URL is relative to the current domain
     if (!url.startsWith("http")) {
       url = url.startsWith("/") ? url : `/${url}`;
+      if (apiBase) {
+        // Ensure no double slashes when joining
+        const base = apiBase.endsWith("/") ? apiBase.slice(0, -1) : apiBase;
+        url = `${base}${url}`;
+      }
     }
 
     // Replace path parameters

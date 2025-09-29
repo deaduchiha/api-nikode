@@ -15,6 +15,10 @@ const ALLOWED_HEADERS = [
   "X-Requested-With",
   "Accept",
   "Origin",
+  "Params",
+  "Query",
+  "Body",
+  "Headers",
 ].join(", ");
 
 function setCorsHeaders(
