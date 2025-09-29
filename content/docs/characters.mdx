@@ -35,7 +35,7 @@ Retrieve a list of characters with optional filtering, sorting, and pagination.
 **Example Request**:
 
 ```bash
-curl "https://api.nikode.com/api/characters?page=1&limit=10&anime=Naruto&minPower=50"
+curl "https://api.nikode.ir/api/characters?page=1&limit=10&anime=Naruto&minPower=50"
 ```
 
 **Example Response**:
@@ -166,7 +166,7 @@ curl -X POST \
     "abilities": ["Kamehameha", "Instant Transmission", "Super Saiyan"],
     "personality": "Pure-hearted and always ready for a challenge"
   }' \
-  "https://api.nikode.com/api/characters"
+  "https://api.nikode.ir/api/characters"
 ```
 
 **Example Response**:
@@ -302,7 +302,7 @@ Retrieve a specific character by ID.
 **Example Request**:
 
 ```bash
-curl "https://api.nikode.com/api/characters/char_1"
+curl "https://api.nikode.ir/api/characters/char_1"
 ```
 
 **Example Response**:
@@ -388,7 +388,7 @@ curl -X PUT \
     "power": 97,
     "abilities": ["Rasengan", "Shadow Clone Jutsu", "Sage Mode", "Six Paths Mode"]
   }' \
-  "https://api.nikode.com/api/characters/char_1"
+  "https://api.nikode.ir/api/characters/char_1"
 ```
 
 **Example Response**:
@@ -504,7 +504,7 @@ Delete a character.
 **Example Request**:
 
 ```bash
-curl -X DELETE "https://api.nikode.com/api/characters/char_1"
+curl -X DELETE "https://api.nikode.ir/api/characters/char_1"
 ```
 
 **Example Response**:
@@ -668,12 +668,12 @@ const newCharacter = await fetch("/api/characters", {
 import requests
 
 # Get all characters
-response = requests.get('https://api.nikode.com/api/characters')
+response = requests.get('https://api.nikode.ir/api/characters')
 characters = response.json()
 
 # Create a character
 new_character = requests.post(
-    'https://api.nikode.com/api/characters',
+    'https://api.nikode.ir/api/characters',
     headers={
         'Content-Type': 'application/json'
     },
@@ -696,10 +696,10 @@ new_character = requests.post(
 
 ```bash
 # Get all characters
-curl "https://api.nikode.com/api/characters"
+curl "https://api.nikode.ir/api/characters"
 
 # Get characters with filtering
-curl "https://api.nikode.com/api/characters?anime=Naruto&minPower=80&sortBy=power&sortOrder=desc"
+curl "https://api.nikode.ir/api/characters?anime=Naruto&minPower=80&sortBy=power&sortOrder=desc"
 
 # Create a character
 curl -X POST \
@@ -716,5 +716,5 @@ curl -X POST \
     "abilities": ["Kamehameha", "Instant Transmission", "Super Saiyan"],
     "personality": "Pure-hearted and always ready for a challenge"
   }' \
-  "https://api.nikode.com/api/characters"
+  "https://api.nikode.ir/api/characters"
 ```

@@ -32,7 +32,7 @@ Perform a global search across all entities.
 **Example Request**:
 
 ```bash
-curl "https://api.nikode.com/api/search?q=naruto&type=characters&page=1&limit=10"
+curl "https://api.nikode.ir/api/search?q=naruto&type=characters&page=1&limit=10"
 ```
 
 **Example Response**:
@@ -229,43 +229,43 @@ interface SearchResponse {
 
 ```bash
 # Search for characters by name
-curl "https://api.nikode.com/api/search?q=goku&type=characters"
+curl "https://api.nikode.ir/api/search?q=goku&type=characters"
 
 # Search for characters by anime
-curl "https://api.nikode.com/api/search?q=dragon&type=characters"
+curl "https://api.nikode.ir/api/search?q=dragon&type=characters"
 
 # Search for powerful characters
-curl "https://api.nikode.com/api/search?q=power&type=characters&sortBy=power&sortOrder=desc"
+curl "https://api.nikode.ir/api/search?q=power&type=characters&sortBy=power&sortOrder=desc"
 ```
 
 ### User Search
 
 ```bash
 # Search for users by username
-curl "https://api.nikode.com/api/search?q=admin&type=users"
+curl "https://api.nikode.ir/api/search?q=admin&type=users"
 
 # Search for users by role
-curl "https://api.nikode.com/api/search?q=moderator&type=users"
+curl "https://api.nikode.ir/api/search?q=moderator&type=users"
 ```
 
 ### Comment Search
 
 ```bash
 # Search for comments by content
-curl "https://api.nikode.com/api/search?q=amazing&type=comments"
+curl "https://api.nikode.ir/api/search?q=amazing&type=comments"
 
 # Search for approved comments
-curl "https://api.nikode.com/api/search?q=great&type=comments&status=approved"
+curl "https://api.nikode.ir/api/search?q=great&type=comments&status=approved"
 ```
 
 ### Global Search
 
 ```bash
 # Search across all entities
-curl "https://api.nikode.com/api/search?q=naruto&type=all"
+curl "https://api.nikode.ir/api/search?q=naruto&type=all"
 
 # Search with pagination
-curl "https://api.nikode.com/api/search?q=anime&page=2&limit=20"
+curl "https://api.nikode.ir/api/search?q=anime&page=2&limit=20"
 ```
 
 ## Error Codes
@@ -305,14 +305,14 @@ import requests
 
 # Search for characters
 response = requests.get(
-    'https://api.nikode.com/api/search',
+    'https://api.nikode.ir/api/search',
     params={'q': 'goku', 'type': 'characters'}
 )
 search_results = response.json()
 
 # Global search
 global_search = requests.get(
-    'https://api.nikode.com/api/search',
+    'https://api.nikode.ir/api/search',
     params={'q': 'anime', 'type': 'all', 'page': 1, 'limit': 10}
 )
 results = global_search.json()
@@ -322,16 +322,16 @@ results = global_search.json()
 
 ```bash
 # Search for characters
-curl "https://api.nikode.com/api/search?q=goku&type=characters"
+curl "https://api.nikode.ir/api/search?q=goku&type=characters"
 
 # Search for users
-curl "https://api.nikode.com/api/search?q=admin&type=users"
+curl "https://api.nikode.ir/api/search?q=admin&type=users"
 
 # Search for comments
-curl "https://api.nikode.com/api/search?q=amazing&type=comments"
+curl "https://api.nikode.ir/api/search?q=amazing&type=comments"
 
 # Global search with pagination
-curl "https://api.nikode.com/api/search?q=anime&type=all&page=1&limit=10&sortBy=relevance&sortOrder=desc"
+curl "https://api.nikode.ir/api/search?q=anime&type=all&page=1&limit=10&sortBy=relevance&sortOrder=desc"
 ```
 
 ## Search Tips

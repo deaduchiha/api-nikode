@@ -34,7 +34,7 @@ Retrieve a list of users with optional filtering, sorting, and pagination.
 **Example Request**:
 
 ```bash
-curl "https://api.nikode.com/api/users?page=1&limit=10&role=moderator&active=true"
+curl "https://api.nikode.ir/api/users?page=1&limit=10&role=moderator&active=true"
 ```
 
 **Example Response**:
@@ -147,7 +147,7 @@ curl -X POST \
     "avatar": "https://example.com/avatar.jpg",
     "isActive": true
   }' \
-  "https://api.nikode.com/api/users"
+  "https://api.nikode.ir/api/users"
 ```
 
 **Example Response**:
@@ -241,7 +241,7 @@ Retrieve a specific user by ID.
 **Example Request**:
 
 ```bash
-curl "https://api.nikode.com/api/users/user_1"
+curl "https://api.nikode.ir/api/users/user_1"
 ```
 
 **Example Response**:
@@ -316,7 +316,7 @@ curl -X PUT \
     "lastName": "Name",
     "isActive": false
   }' \
-  "https://api.nikode.com/api/users/user_1"
+  "https://api.nikode.ir/api/users/user_1"
 ```
 
 **Example Response**:
@@ -391,7 +391,7 @@ Delete a user.
 **Example Request**:
 
 ```bash
-curl -X DELETE "https://api.nikode.com/api/users/user_2"
+curl -X DELETE "https://api.nikode.ir/api/users/user_2"
 ```
 
 **Example Response**:
@@ -528,12 +528,12 @@ const newUser = await fetch("/api/users", {
 import requests
 
 # Get all users
-response = requests.get('https://api.nikode.com/api/users')
+response = requests.get('https://api.nikode.ir/api/users')
 users = response.json()
 
 # Create a user
 new_user = requests.post(
-    'https://api.nikode.com/api/users',
+    'https://api.nikode.ir/api/users',
     headers={
         'Content-Type': 'application/json'
     },
@@ -553,10 +553,10 @@ new_user = requests.post(
 
 ```bash
 # Get all users
-curl "https://api.nikode.com/api/users"
+curl "https://api.nikode.ir/api/users"
 
 # Get users with filtering
-curl "https://api.nikode.com/api/users?role=moderator&active=true&sortBy=createdAt&sortOrder=desc"
+curl "https://api.nikode.ir/api/users?role=moderator&active=true&sortBy=createdAt&sortOrder=desc"
 
 # Create a user
 curl -X POST \
@@ -570,5 +570,5 @@ curl -X POST \
     "avatar": "https://example.com/avatar.jpg",
     "isActive": true
   }' \
-  "https://api.nikode.com/api/users"
+  "https://api.nikode.ir/api/users"
 ```

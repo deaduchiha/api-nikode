@@ -35,7 +35,7 @@ Retrieve a list of comments with optional filtering, sorting, and pagination.
 **Example Request**:
 
 ```bash
-curl "https://api.nikode.com/api/comments?page=1&limit=10&characterId=char_1&status=approved"
+curl "https://api.nikode.ir/api/comments?page=1&limit=10&characterId=char_1&status=approved"
 ```
 
 **Example Response**:
@@ -142,7 +142,7 @@ curl -X POST \
     "content": "This character is absolutely incredible! Their power level and abilities are unmatched.",
     "rating": 5
   }' \
-  "https://api.nikode.com/api/comments"
+  "https://api.nikode.ir/api/comments"
 ```
 
 **Example Response**:
@@ -212,7 +212,7 @@ Retrieve a specific comment by ID.
 **Example Request**:
 
 ```bash
-curl "https://api.nikode.com/api/comments/comment_1"
+curl "https://api.nikode.ir/api/comments/comment_1"
 ```
 
 **Example Response**:
@@ -279,7 +279,7 @@ curl -X PUT \
     "content": "Updated comment content with more details about the character.",
     "rating": 4
   }' \
-  "https://api.nikode.com/api/comments/comment_1"
+  "https://api.nikode.ir/api/comments/comment_1"
 ```
 
 **Example Response**:
@@ -351,7 +351,7 @@ Delete a comment.
 **Example Request**:
 
 ```bash
-curl -X DELETE "https://api.nikode.com/api/comments/comment_1"
+curl -X DELETE "https://api.nikode.ir/api/comments/comment_1"
 ```
 
 **Example Response**:
@@ -417,7 +417,7 @@ curl -X PATCH \
   -d '{
     "status": "approved"
   }' \
-  "https://api.nikode.com/api/comments/comment_1/moderate"
+  "https://api.nikode.ir/api/comments/comment_1/moderate"
 ```
 
 **Example Response**:
@@ -580,12 +580,12 @@ const moderateComment = await fetch("/api/comments/comment_1/moderate", {
 import requests
 
 # Get all comments
-response = requests.get('https://api.nikode.com/api/comments')
+response = requests.get('https://api.nikode.ir/api/comments')
 comments = response.json()
 
 # Create a comment
 new_comment = requests.post(
-    'https://api.nikode.com/api/comments',
+    'https://api.nikode.ir/api/comments',
     headers={
         'Content-Type': 'application/json'
     },
@@ -598,7 +598,7 @@ new_comment = requests.post(
 
 # Moderate a comment
 moderate_comment = requests.patch(
-    'https://api.nikode.com/api/comments/comment_1/moderate',
+    'https://api.nikode.ir/api/comments/comment_1/moderate',
     headers={
         'Content-Type': 'application/json'
     },
@@ -612,10 +612,10 @@ moderate_comment = requests.patch(
 
 ```bash
 # Get all comments
-curl "https://api.nikode.com/api/comments"
+curl "https://api.nikode.ir/api/comments"
 
 # Get comments with filtering
-curl "https://api.nikode.com/api/comments?characterId=char_1&status=approved&sortBy=createdAt&sortOrder=desc"
+curl "https://api.nikode.ir/api/comments?characterId=char_1&status=approved&sortBy=createdAt&sortOrder=desc"
 
 # Create a comment
 curl -X POST \
@@ -625,7 +625,7 @@ curl -X POST \
     "content": "This character is absolutely incredible!",
     "rating": 5
   }' \
-  "https://api.nikode.com/api/comments"
+  "https://api.nikode.ir/api/comments"
 
 # Moderate a comment
 curl -X PATCH \
@@ -633,5 +633,5 @@ curl -X PATCH \
   -d '{
     "status": "approved"
   }' \
-  "https://api.nikode.com/api/comments/comment_1/moderate"
+  "https://api.nikode.ir/api/comments/comment_1/moderate"
 ```
